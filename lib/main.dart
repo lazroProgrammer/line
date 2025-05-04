@@ -39,8 +39,10 @@ class MainApp extends StatelessWidget {
           stream: FirebaseAuth.instance.authStateChanges(),
           builder: (context, snapshot) {
             if (snapshot.connectionState == ConnectionState.waiting) {
-              return Scaffold(
-                body: const Center(child: CircularProgressIndicator()),
+              return SafeArea(
+                child: Scaffold(
+                  body: const Center(child: CircularProgressIndicator()),
+                ),
               );
             } else if (snapshot.hasData) {
               return const Mainpage();

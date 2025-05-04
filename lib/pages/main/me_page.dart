@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:line/core/apis/app/connectivity.dart';
+import 'package:line/core/apis/firebase/auth.dart';
 import 'package:line/core/controllers/UI/toggle_controller.dart';
-import 'package:line/pages/login/login_page.dart';
 import 'package:line/pages/main/me/about_page.dart';
 import 'package:line/pages/main/me/settings_page.dart';
 
@@ -87,12 +87,7 @@ class MePage extends StatelessWidget {
             Connection.internetConnection().then((value) {
               // usr!.exportData(usr.id);
               // User.signOut();
-              if (context.mounted) {
-                Navigator.pushReplacement(
-                  context,
-                  MaterialPageRoute(builder: (context) => LoginPage()),
-                );
-              }
+              signOut().then((v) {});
             });
           },
         ),

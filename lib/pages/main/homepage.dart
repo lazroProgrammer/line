@@ -1,15 +1,26 @@
 import 'package:flutter/material.dart';
+import 'package:get/get.dart';
+import 'package:line/core/controllers/UI/inbox_controller.dart';
 import 'package:line/widgets/data/inbox_widget.dart';
+import 'package:line/widgets/skeltons/skelton.dart';
 
 class Homepage extends StatelessWidget {
   const Homepage({super.key});
 
   @override
   Widget build(BuildContext context) {
-    return ListView.builder(
-      itemCount: inboxWidgets.length,
-      itemBuilder: (context, index) => inboxWidgets[index],
-    );
+    final inboxController = Get.put(InboxController());
+    return Obx(() {
+      return inboxController.isLoaded.value
+          ? ListView.builder(
+            itemCount: inboxWidgets.length,
+            itemBuilder: (context, index) => inboxWidgets[index],
+          )
+          : ListView.builder(
+            itemCount: 8,
+            itemBuilder: (context, index) => Skelton(),
+          );
+    });
   }
 }
 

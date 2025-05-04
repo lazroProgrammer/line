@@ -5,11 +5,11 @@ class AboutPage extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: AppBar(
-        title: Text("About us"),
+    return SafeArea(
+      child: Scaffold(
+        appBar: AppBar(title: Text("About us")),
+        body: Container(),
       ),
-      body: Container(),
     );
   }
 }
