@@ -10,7 +10,7 @@ class Friend {
   final DocumentReference receiver;
 
   Friend({
-    required this.id,
+    this.id = "",
     required this.createdAt,
     required this.sender,
     required this.receiver,

@@ -1,15 +1,24 @@
 import 'package:flutter/material.dart';
-import 'package:get/get_state_manager/get_state_manager.dart';
-import 'package:get/instance_manager.dart';
+import 'package:get/get.dart';
 import 'package:line/core/controllers/UI/index_controller.dart';
+import 'package:line/pages/main/add_friends_page.dart';
+import 'package:line/pages/main/friends_request_page.dart';
 import 'package:line/pages/main/homepage.dart';
 import 'package:line/pages/main/me_page.dart';
 
 const List<String> labels = ["Home", "Me"];
 const List<Widget> widgets = [Homepage(), MePage()];
+// Future<void> _getTo(Widget t) async {
+//   await Get.to(
+//     () => t,
+//     duration: Duration(milliseconds: 400),
+//     transition: Transition.fade,
+//   );
+// }
 
 class Mainpage extends StatelessWidget {
   const Mainpage({super.key});
+
   @override
   Widget build(BuildContext context) {
     IndexController indexController = Get.put(
@@ -23,8 +32,26 @@ class Mainpage extends StatelessWidget {
           appBar: AppBar(
             title: Text(labels[index]),
             actions: [
-              IconButton(onPressed: () {}, icon: Icon(Icons.person_add)),
-              IconButton(onPressed: () {}, icon: Icon(Icons.person_pin_sharp)),
+              IconButton(
+                onPressed: () {
+                  Get.to(
+                    () => AddFriendsPage(),
+                    duration: Duration(milliseconds: 400),
+                    transition: Transition.fade,
+                  );
+                },
+                icon: Icon(Icons.person_add),
+              ),
+              IconButton(
+                onPressed: () {
+                  Get.to(
+                    () => FriendsRequestPage(),
+                    duration: Duration(milliseconds: 400),
+                    transition: Transition.fade,
+                  );
+                },
+                icon: Icon(Icons.person_pin_sharp),
+              ),
             ],
           ),
           body: AnimatedSwitcher(

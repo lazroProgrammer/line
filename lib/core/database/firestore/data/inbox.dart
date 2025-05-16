@@ -10,7 +10,7 @@ class Inbox {
   final List<DocumentReference> userIDs;
 
   Inbox({
-    required this.id,
+    this.id = "",
     required this.lastMessage,
     required this.lastUpdated,
     required this.userIDs,

@@ -10,33 +10,41 @@ class ProfilePage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     UserDataController userController = Get.find(tag: "user");
-    return Scaffold(
-      appBar: AppBar(title: Text("Profile")),
-      body: Obx(() {
-        final user = userController.user.value;
-        return Padding(
-          padding: const EdgeInsets.symmetric(horizontal: 12.0, vertical: 8),
-          child: ListView(
-            children: [
-              Column(
-                crossAxisAlignment: CrossAxisAlignment.center,
-                children: [
-                  ProfilePicture(),
-                  Text(
-                    user.name,
-                    style: TextStyle(fontWeight: FontWeight.w600, fontSize: 20),
-                  ),
-                  Text(
-                    user.email,
-                    style: TextStyle(fontWeight: FontWeight.w600, fontSize: 18),
-                  ),
-                  FriendsWidget(),
-                ],
-              ),
-            ],
-          ),
-        );
-      }),
+    return SafeArea(
+      child: Scaffold(
+        appBar: AppBar(title: Text("Profile")),
+        body: Obx(() {
+          final user = userController.user.value;
+          return Padding(
+            padding: const EdgeInsets.symmetric(horizontal: 12.0, vertical: 8),
+            child: ListView(
+              children: [
+                Column(
+                  crossAxisAlignment: CrossAxisAlignment.center,
+                  children: [
+                    ProfilePicture(),
+                    Text(
+                      user.name,
+                      style: TextStyle(
+                        fontWeight: FontWeight.w600,
+                        fontSize: 20,
+                      ),
+                    ),
+                    Text(
+                      user.email,
+                      style: TextStyle(
+                        fontWeight: FontWeight.w600,
+                        fontSize: 18,
+                      ),
+                    ),
+                    FriendsWidget(),
+                  ],
+                ),
+              ],
+            ),
+          );
+        }),
+      ),
     );
   }
 }

@@ -14,7 +14,7 @@ class Message {
   final DocumentReference sender;
 
   Message({
-    required this.id,
+    this.id = "",
     required this.content,
     required this.createdAt,
     required this.inboxRef,

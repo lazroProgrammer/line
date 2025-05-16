@@ -11,7 +11,7 @@ class FriendRequest {
   final String status;
 
   FriendRequest({
-    required this.id,
+    this.id = "",
     required this.createdAt,
     required this.sender,
     required this.receiver,

@@ -22,7 +22,7 @@ class FirestoreCRUD<T> {
     return fromJson(doc.data() as Map<String, dynamic>, doc.id);
   }
 
-  Future<void> add(String id, T item) async {
+  Future<void> add(T item, {String? id}) async {
     await collection.doc(id).set(toJson(item));
   }
 
