@@ -20,7 +20,13 @@ class Mainpage extends StatelessWidget {
       final int index = indexController.obj.value;
       return SafeArea(
         child: Scaffold(
-          appBar: AppBar(title: Text(labels[index])),
+          appBar: AppBar(
+            title: Text(labels[index]),
+            actions: [
+              IconButton(onPressed: () {}, icon: Icon(Icons.person_add)),
+              IconButton(onPressed: () {}, icon: Icon(Icons.person_pin_sharp)),
+            ],
+          ),
           body: AnimatedSwitcher(
             duration: const Duration(milliseconds: 300),
             transitionBuilder: (Widget child, Animation<double> animation) {

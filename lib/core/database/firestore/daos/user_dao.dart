@@ -10,7 +10,7 @@ class UserDao extends FirestoreCRUD<AppUser> {
         toJson: (AppUser user) => user.toJson(),
       );
 
-  Future<List<AppUser>> getByEmail(String email) async {
+  Future<List<AppUser>> getByEmailAuth(String email) async {
     final querySnapshot =
         await firestore
             .collection(collectionPath)
@@ -26,9 +26,34 @@ class UserDao extends FirestoreCRUD<AppUser> {
     String name, {
     DocumentSnapshot? lastVisibleMessage,
   }) async {
+    final cleaned = name.trim().toLowerCase();
+
     final query = firestore
         .collection(collectionPath)
-        .where('name', isEqualTo: name)
+        .where('name', isGreaterThanOrEqualTo: cleaned)
+        .where('name', isLessThan: '${cleaned}z')
+        .limit(5);
+
+    final querySnapshot =
+        (lastVisibleMessage == null)
+            ? await query.get()
+            : await query.startAfterDocument(lastVisibleMessage).get();
+
+    return querySnapshot.docs
+        .map((doc) => fromJson(doc.data(), doc.id))
+        .toList();
+  }
+
+  Future<List<AppUser>> getByEmailSearch(
+    String email, {
+    DocumentSnapshot? lastVisibleMessage,
+  }) async {
+    final cleaned = email.trim().toLowerCase();
+
+    final query = firestore
+        .collection(collectionPath)
+        .where('email', isGreaterThanOrEqualTo: cleaned)
+        .where('email', isLessThan: '$cleaned\uf8ff')
         .limit(5);
 
     final querySnapshot =

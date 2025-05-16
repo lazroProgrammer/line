@@ -9,7 +9,9 @@ Future<UserCredential> signInWithEmail(String email, String password) async {
       password: password.trim(),
     );
   } on FirebaseAuthException catch (e) {
+    //TODO: needs real handling of exceptions here
     log.e('Code: ${e.code}');
+    log.e('${e.runtimeType}');
     log.e('Message: ${e.message}');
     rethrow;
   }

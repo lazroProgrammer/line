@@ -3,6 +3,7 @@ import 'package:line/core/database/firestore/data/friend.dart';
 import 'package:line/core/database/firestore/firestore_crud.dart';
 
 //TODO: all Daos functions needs testing
+//TODO: if you add state to the DAO classes for any reason (which you shouldn't), you should make them singleton
 class FriendDao extends FirestoreCRUD<Friend> {
   FriendDao({required super.firestore})
     : super(

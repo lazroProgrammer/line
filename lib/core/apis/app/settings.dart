@@ -1,22 +1,23 @@
+import 'package:line/core/database/firestore/data/app_user.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 class SettingsData {
   static late SharedPreferences _preferences;
   static const isLoggedKey = 'login';
-
   static const darkmodeKey = 'darkmode';
-
   static const allowNotificationKey = 'allowNotification';
   static const dailyReminderKey = 'dailyReminder';
   static const msgNotificationKey = 'msgNotification';
-
   static const currencyKey = 'preferedCurrency';
   static const regionalTimeKey = 'regionalTime';
   static const dateFormatKey = 'dateFormatKey';
+  static const nameKey = 'nameKey';
+  static const emailKey = 'emailKey';
+  static const userIDKey = 'userID';
 
   static final SettingsData _instance = SettingsData._internal();
-  late bool darkmode;
 
+  late bool darkmode;
   late bool allowNotifications;
   late bool dailyReminder;
   late bool msgNotificationReminder;
@@ -24,13 +25,13 @@ class SettingsData {
   late String prefferedCurrency;
   late String regionalTime;
   late String dateFormat;
-  final String localId = "setting";
 
-  factory SettingsData() {
-    return _instance;
-  }
+  late String name;
+  late String email;
+  late String userID;
 
-  // TODO: change currency init
+  factory SettingsData() => _instance;
+
   SettingsData._internal() {
     darkmode = getdark() ?? false;
     allowNotifications = getNotification() ?? false;
@@ -39,6 +40,9 @@ class SettingsData {
     msgNotificationReminder = getmsgNotificationReminder() ?? false;
     regionalTime = getRegionalTimeFormat() ?? "dd/MM/yy";
     dateFormat = getDateFormat() ?? "HH:mm";
+    name = getName() ?? "None";
+    email = getEmail() ?? "example@wow.com";
+    userID = getUserID() ?? "";
   }
 
   static Future init() async =>
@@ -50,49 +54,57 @@ class SettingsData {
 
   static bool? getLogin() => _preferences.getBool(isLoggedKey);
 
-  static Future setdark(bool b) async {
-    await _preferences.setBool(darkmodeKey, b);
-  }
+  static Future setdark(bool b) async =>
+      await _preferences.setBool(darkmodeKey, b);
 
   static bool? getdark() => _preferences.getBool(darkmodeKey);
 
-  static Future setCurrency(String b) async {
-    await _preferences.setString(currencyKey, b);
-  }
+  static Future setCurrency(String b) async =>
+      await _preferences.setString(currencyKey, b);
 
   static String? getCurrency() => _preferences.getString(currencyKey);
 
-  static Future setNotification(bool b) async {
-    await _preferences.setBool(allowNotificationKey, b);
-  }
+  static Future setNotification(bool b) async =>
+      await _preferences.setBool(allowNotificationKey, b);
 
   static bool? getNotification() => _preferences.getBool(allowNotificationKey);
 
-  static Future setDailyReminder(bool b) async {
-    await _preferences.setBool(dailyReminderKey, b);
-  }
+  static Future setDailyReminder(bool b) async =>
+      await _preferences.setBool(dailyReminderKey, b);
 
   static bool? getDailyReminder() => _preferences.getBool(dailyReminderKey);
 
-  static Future setmsgNotificationReminder(bool b) async {
-    await _preferences.setBool(msgNotificationKey, b);
-  }
+  static Future setmsgNotificationReminder(bool b) async =>
+      await _preferences.setBool(msgNotificationKey, b);
 
   static bool? getmsgNotificationReminder() =>
       _preferences.getBool(msgNotificationKey);
 
-  static Future setRegionalTimeFormat(String b) async {
-    await _preferences.setString(regionalTimeKey, b);
-  }
+  static Future setRegionalTimeFormat(String b) async =>
+      await _preferences.setString(regionalTimeKey, b);
 
   static String? getRegionalTimeFormat() =>
       _preferences.getString(regionalTimeKey);
 
-  static Future setDateFormat(String b) async {
-    await _preferences.setString(dateFormatKey, b);
-  }
+  static Future setDateFormat(String b) async =>
+      await _preferences.setString(dateFormatKey, b);
 
   static String? getDateFormat() => _preferences.getString(dateFormatKey);
+
+  static Future setName(String b) async =>
+      await _preferences.setString(nameKey, b);
+
+  static String? getName() => _preferences.getString(nameKey);
+
+  static Future setEmail(String b) async =>
+      await _preferences.setString(emailKey, b);
+
+  static String? getEmail() => _preferences.getString(emailKey);
+
+  static Future setUserID(String b) async =>
+      await _preferences.setString(userIDKey, b);
+
+  static String? getUserID() => _preferences.getString(userIDKey);
 
   void update({
     bool? darkTheme,
@@ -102,34 +114,50 @@ class SettingsData {
     String? currencyP,
     String? regionalTimeP,
     String? dateFormatP,
+    String? nameP,
+    String? emailP,
+    String? userIDP,
   }) {
-    if (darkTheme != null) {
-      setdark(darkTheme);
-      darkmode = darkTheme;
+    void updateField<T>(
+      T? value,
+      void Function(T) setter,
+      void Function(T) assign,
+    ) {
+      if (value != null) {
+        setter(value);
+        assign(value);
+      }
     }
-    if (notifications != null) {
-      setNotification(notifications);
-      allowNotifications = notifications;
-    }
-    if (dailyReminderP != null) {
-      setDailyReminder(dailyReminderP);
-      dailyReminder = dailyReminderP;
-    }
-    if (msgNotificationReminderP != null) {
-      setmsgNotificationReminder(msgNotificationReminderP);
-      msgNotificationReminder = msgNotificationReminderP;
-    }
-    if (currencyP != null) {
-      setCurrency(currencyP);
-      prefferedCurrency = currencyP;
-    }
-    if (regionalTimeP != null) {
-      setRegionalTimeFormat(regionalTimeP);
-      regionalTime = regionalTimeP;
-    }
-    if (dateFormatP != null) {
-      setDateFormat(dateFormatP);
-      dateFormat = dateFormatP;
-    }
+
+    updateField<bool>(darkTheme, setdark, (v) => darkmode = v);
+    updateField<bool>(
+      notifications,
+      setNotification,
+      (v) => allowNotifications = v,
+    );
+    updateField<bool>(
+      dailyReminderP,
+      setDailyReminder,
+      (v) => dailyReminder = v,
+    );
+    updateField<bool>(
+      msgNotificationReminderP,
+      setmsgNotificationReminder,
+      (v) => msgNotificationReminder = v,
+    );
+    updateField<String>(currencyP, setCurrency, (v) => prefferedCurrency = v);
+    updateField<String>(
+      regionalTimeP,
+      setRegionalTimeFormat,
+      (v) => regionalTime = v,
+    );
+    updateField<String>(dateFormatP, setDateFormat, (v) => dateFormat = v);
+    updateField<String>(nameP, setName, (v) => name = v);
+    updateField<String>(emailP, setEmail, (v) => email = v);
+    updateField<String>(userIDP, setUserID, (v) => userID = v);
+  }
+
+  AppUser getUser() {
+    return AppUser(id: userID, email: email, name: name);
   }
 }

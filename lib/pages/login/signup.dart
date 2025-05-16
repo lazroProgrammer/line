@@ -7,6 +7,7 @@ import 'package:line/core/apis/app/connectivity.dart';
 import 'package:line/core/apis/firebase/auth.dart';
 import 'package:line/core/controllers/UI/toggle_controller.dart';
 import 'package:line/widgets/frequent_toasts.dart';
+import 'package:line/widgets/profile_picture.dart';
 
 class SignupPage extends StatefulWidget {
   const SignupPage({super.key});
@@ -103,13 +104,7 @@ class _MyWidgetState extends State<SignupPage> {
               key: formKey,
               child: Column(
                 children: [
-                  const Padding(
-                    padding: EdgeInsets.all(8.0),
-                    child: CircleAvatar(
-                      radius: 100,
-                      child: Icon(Icons.person, size: 140),
-                    ),
-                  ),
+                  ProfilePicture(),
                   Divider(),
                   SizedBox(height: 10),
                   SizedBox(

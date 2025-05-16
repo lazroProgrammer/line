@@ -3,7 +3,9 @@ import 'package:get/get.dart';
 import 'package:line/core/apis/app/connectivity.dart';
 import 'package:line/core/apis/firebase/auth.dart';
 import 'package:line/core/controllers/UI/toggle_controller.dart';
+import 'package:line/core/controllers/data/user_data_controller.dart';
 import 'package:line/pages/main/me/about_page.dart';
+import 'package:line/pages/main/me/profile_page.dart';
 import 'package:line/pages/main/me/settings_page.dart';
 
 class MePage extends StatelessWidget {
@@ -14,6 +16,10 @@ class MePage extends StatelessWidget {
   Widget build(BuildContext context) {
     // final usr = ref.watch(userNotifier);
     final ToggleController darkmode = Get.find(tag: "dark");
+    UserDataController userController = Get.put(
+      UserDataController(),
+      tag: "user",
+    );
 
     return Column(
       children: [
@@ -23,13 +29,19 @@ class MePage extends StatelessWidget {
           child: CircleAvatar(radius: 70, child: Icon(Icons.person, size: 110)),
         ),
         const SizedBox(height: 10),
-        Text(
-          // "${usr?.name}",
-          "james",
-          style: const TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
-        ),
+        Obx(() {
+          final name = userController.user.value.name;
+          return Text(
+            // "${usr?.name}",
+            name,
+            style: const TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
+          );
+        }),
         // Text("${usr?.email}"),
-        Text("example@gmail.com"),
+        Obx(() {
+          final email = userController.user.value.email;
+          return Text(email);
+        }),
 
         const SizedBox(height: 20),
         Obx(() {
@@ -52,8 +64,11 @@ class MePage extends StatelessWidget {
           leading: const Icon(Icons.person),
           title: const Text('profile'),
           onTap: () {
-            // Navigator.of(context).push(
-            //     MaterialPageRoute(builder: (context) => const ProfilePage()));
+            Get.to(
+              () => ProfilePage(),
+              duration: Duration(milliseconds: 400),
+              transition: Transition.fade,
+            );
           },
         ),
         ListTile(

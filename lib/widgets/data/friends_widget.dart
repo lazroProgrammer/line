@@ -1,50 +1,71 @@
 import 'package:flutter/material.dart';
-import 'package:get/get.dart';
-import 'package:line/core/controllers/settings/darkmode_controller.dart';
-import 'package:line/core/controllers/settings/time_format_controller.dart';
+import 'package:line/widgets/data/Friend_widget.dart';
 
 class FriendsWidget extends StatelessWidget {
-  const FriendsWidget({
-    super.key,
-    required this.index,
-    required this.widgetKey,
-  });
-  final int index;
-  final GlobalKey widgetKey;
+  const FriendsWidget({super.key});
+  final count = 10;
   @override
   Widget build(BuildContext context) {
-    final DarkmodeController darkmode = Get.find(tag: "dark");
-    final TimeFormatController timeFormatController = Get.put(
-      TimeFormatController(),
-    );
-    return Material(
-      child: InkWell(
-        onTap: () {
-          // showTransactionPopupMenu(
-          //   context,
-          //   widgetKey,
-          //   edit: () {
-          //     // final PageControllerX pageController = Get.find(
-          //     //   tag: "pageController",
-          //     // );
-          //     // showBottomSlide(context, pageController, tr);
-          //   },
-          //   delete: () {
-          //   //   final TransactionsController trController = Get.find(
-          //   //     tag: "transactions",
-          //   //   );
-          //   //   trController.deleteTransactionByID(tr.transactionID);
-          //   },
-          // );
-        },
-        child: Container(
-          key: widgetKey,
-          padding: const EdgeInsets.all(8),
-          width: MediaQuery.of(context).size.width - 40,
-          height: 80,
-          child: Container(),
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        Row(
+          children: [
+            Text(
+              "Friends",
+              style: TextStyle(fontSize: 24, fontWeight: FontWeight.bold),
+            ),
+            Container(
+              margin: const EdgeInsets.only(left: 4),
+              padding: const EdgeInsets.all(6),
+              decoration: const BoxDecoration(
+                color: Colors.red,
+                shape: BoxShape.circle,
+              ),
+              child: Text(
+                count.toString(),
+                style: const TextStyle(
+                  color: Colors.white,
+                  fontSize: 14,
+                  fontWeight: FontWeight.w500,
+                ),
+              ),
+            ),
+          ],
         ),
-      ),
+        Wrap(
+          spacing: 8.0,
+          runSpacing: 8.0,
+          children: List.generate(
+            10,
+            (index) => FriendWidget(
+              color: _avatarColors[index],
+              name: "Alice",
+              email: "",
+            ),
+          ),
+        ),
+      ],
     );
   }
 }
+
+final List<Color> _avatarColors = [
+  Colors.redAccent,
+  Colors.pinkAccent,
+  Colors.orangeAccent,
+  Colors.deepOrangeAccent,
+  Colors.amber,
+  Colors.yellow.shade700,
+  Colors.lime.shade600,
+  Colors.lightGreen,
+  Colors.green,
+  Colors.teal,
+  Colors.cyan,
+  Colors.lightBlue,
+  Colors.blueAccent,
+  Colors.indigoAccent,
+  Colors.purpleAccent,
+  Colors.deepPurpleAccent,
+  Colors.grey.shade600,
+];

@@ -7,6 +7,7 @@ import 'package:line/core/apis/firebase/auth.dart';
 import 'package:line/core/controllers/UI/toggle_controller.dart';
 import 'package:line/pages/login/signup.dart';
 import 'package:line/widgets/frequent_toasts.dart';
+import 'package:line/widgets/profile_picture.dart';
 
 class LoginPage extends StatelessWidget {
   LoginPage({super.key});
@@ -44,13 +45,7 @@ class LoginPage extends StatelessWidget {
               child: Column(
                 children: [
                   SizedBox(height: 10),
-                  const Padding(
-                    padding: EdgeInsets.all(8.0),
-                    child: CircleAvatar(
-                      radius: 100,
-                      child: Icon(Icons.person, size: 140),
-                    ),
-                  ),
+                  ProfilePicture(),
                   SizedBox(height: 10),
                   Divider(),
                   SizedBox(height: 20),
