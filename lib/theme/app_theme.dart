@@ -131,25 +131,32 @@ class AppTheme {
     ),
     // fontFamily: fontFamily,
   );
-
   static ThemeData darkTheme = ThemeData(
     brightness: Brightness.dark,
     primaryColor: adjustBrightness(primaryColor, isDarkMode: true),
-    scaffoldBackgroundColor: Color(0xFF121212),
+    scaffoldBackgroundColor: const Color(0xFF121212),
     colorScheme: ColorScheme.dark(
       primary: adjustBrightness(primaryColor, isDarkMode: true),
       secondary: adjustBrightness(secondaryColor, isDarkMode: true),
-      surface: Color(0xFF1E1E1E),
+      surface: const Color(0xFF1E1E1E),
       error: errorColor,
+      onPrimary: Colors.white,
+      onSecondary: Colors.white,
+      onSurface: Colors.white,
     ),
-    appBarTheme: AppBarTheme(
-      titleTextStyle: TextStyle(fontWeight: FontWeight.bold, fontSize: 24),
+    iconTheme: const IconThemeData(color: Colors.white),
+    appBarTheme: const AppBarTheme(
+      iconTheme: IconThemeData(color: Colors.white),
+      titleTextStyle: TextStyle(
+        fontWeight: FontWeight.bold,
+        fontSize: 24,
+        color: Colors.white,
+      ),
     ),
     textTheme: const TextTheme(
       headlineLarge: headline1d,
       bodyLarge: bodyText1d,
       labelLarge: captiond,
     ),
-    // fontFamily: fontFamily,
   );
 }

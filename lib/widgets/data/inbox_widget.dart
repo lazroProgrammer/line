@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:get/get_navigation/get_navigation.dart';
-import 'package:get/state_manager.dart';
+import 'package:line/generic_fonctions.dart';
 import 'package:line/pages/main/chat_page.dart';
 
 class InboxWidget extends StatelessWidget {
@@ -51,11 +50,7 @@ class InboxWidget extends StatelessWidget {
   Widget build(BuildContext context) {
     return InkWell(
       onTap: () {
-        Get.to(
-          () => ChatPage(),
-          duration: Duration(milliseconds: 400),
-          transition: Transition.fade,
-        );
+        navigateWithFade(ChatPage());
       },
       child: Container(
         margin: const EdgeInsets.symmetric(vertical: 12, horizontal: 8),

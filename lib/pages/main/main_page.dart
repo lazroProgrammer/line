@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:line/core/controllers/UI/index_controller.dart';
+import 'package:line/generic_fonctions.dart';
 import 'package:line/pages/main/add_friends_page.dart';
 import 'package:line/pages/main/friends_request_page.dart';
 import 'package:line/pages/main/homepage.dart';
@@ -8,13 +9,6 @@ import 'package:line/pages/main/me_page.dart';
 
 const List<String> labels = ["Home", "Me"];
 const List<Widget> widgets = [Homepage(), MePage()];
-// Future<void> _getTo(Widget t) async {
-//   await Get.to(
-//     () => t,
-//     duration: Duration(milliseconds: 400),
-//     transition: Transition.fade,
-//   );
-// }
 
 class Mainpage extends StatelessWidget {
   const Mainpage({super.key});
@@ -34,21 +28,13 @@ class Mainpage extends StatelessWidget {
             actions: [
               IconButton(
                 onPressed: () {
-                  Get.to(
-                    () => AddFriendsPage(),
-                    duration: Duration(milliseconds: 400),
-                    transition: Transition.fade,
-                  );
+                  navigateWithFade(AddFriendsPage());
                 },
                 icon: Icon(Icons.person_add),
               ),
               IconButton(
                 onPressed: () {
-                  Get.to(
-                    () => FriendsRequestPage(),
-                    duration: Duration(milliseconds: 400),
-                    transition: Transition.fade,
-                  );
+                  navigateWithFade(FriendsRequestPage());
                 },
                 icon: Icon(Icons.person_pin_sharp),
               ),

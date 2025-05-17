@@ -13,20 +13,24 @@ class FriendWidget extends StatelessWidget {
   final String email;
   @override
   Widget build(BuildContext context) {
-    return Padding(
-      padding: EdgeInsets.all(4.0),
-      child: Column(
-        children: [
-          CircleAvatar(
-            backgroundColor: color,
-            radius: 40,
-            child: Icon(Icons.person, size: 60),
-          ),
-          Text(
-            name,
-            style: TextStyle(fontWeight: FontWeight.w500, fontSize: 16),
-          ),
-        ],
+    return Card(
+      // margin: EdgeInsets.symmetric(vertical: 6),
+      // elevation: 3,
+      child: Padding(
+        padding: const EdgeInsets.fromLTRB(16, 16, 16, 24),
+        child: Column(
+          children: [
+            CircleAvatar(
+              backgroundColor: color,
+              radius: 40,
+              child: Icon(Icons.person, size: 65),
+            ),
+            Text(
+              name,
+              style: TextStyle(fontWeight: FontWeight.w500, fontSize: 16),
+            ),
+          ],
+        ),
       ),
     );
   }

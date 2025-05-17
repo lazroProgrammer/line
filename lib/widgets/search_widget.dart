@@ -20,17 +20,18 @@ class _SearchWidgetState extends State<SearchWidget> {
     return !validNameRegex.hasMatch(input);
   }
 
-  Future<void> _onSubmitted() async {
-    final text = controller.text.trim();
-    if (text.length < 3) {
+  Future<void> _onSubmitted([String? text]) async {
+    final input = (text ?? controller.text).trim();
+
+    if (input.length < 3) {
       Fluttertoast.showToast(msg: "Enter at least 3 characters");
       return;
     }
 
-    if (_containsInvalidNameChars(text)) {
-      await _searchController.searchByEmail(text);
+    if (_containsInvalidNameChars(input)) {
+      await _searchController.searchByEmail(input);
     } else {
-      await _searchController.searchByName(text);
+      await _searchController.searchByName(input);
     }
 
     FocusScope.of(context).unfocus();
@@ -38,24 +39,27 @@ class _SearchWidgetState extends State<SearchWidget> {
 
   @override
   Widget build(BuildContext context) {
-    return SearchAnchor(
-      isFullScreen: false,
-      viewOnChanged: (_) {}, // No suggestions
-      builder: (context, controller) {
-        return SearchBar(
-          controller: controller,
-          padding: const WidgetStatePropertyAll(
-            EdgeInsets.symmetric(horizontal: 16),
-          ),
-          onTap: () => controller.openView(),
-          onChanged: (_) {}, // Keep it empty to avoid filtering or triggering
-          leading: IconButton(
-            icon: const Icon(Icons.search),
-            onPressed: _onSubmitted,
-          ),
-        );
-      },
-      suggestionsBuilder: (_, __) => [], // No suggestions shown
+    return RepaintBoundary(
+      child: SearchAnchor(
+        isFullScreen: false,
+        viewOnChanged: (_) {}, // No live filtering
+        builder: (context, controller) {
+          return SearchBar(
+            controller: controller,
+            padding: const WidgetStatePropertyAll(
+              EdgeInsets.symmetric(horizontal: 16),
+            ),
+            // onTap: () => controller.openView(),
+            // onChanged: (_) {}, // No throttle/search on change
+            onSubmitted: _onSubmitted, // Triggers when hitting enter
+            leading: IconButton(
+              icon: const Icon(Icons.search),
+              onPressed: _onSubmitted,
+            ),
+          );
+        },
+        suggestionsBuilder: (_, __) => [], // No suggestions
+      ),
     );
   }
 }

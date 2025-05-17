@@ -4,6 +4,7 @@ import 'package:line/core/apis/app/connectivity.dart';
 import 'package:line/core/apis/firebase/auth.dart';
 import 'package:line/core/controllers/UI/toggle_controller.dart';
 import 'package:line/core/controllers/data/user_data_controller.dart';
+import 'package:line/generic_fonctions.dart';
 import 'package:line/pages/main/me/about_page.dart';
 import 'package:line/pages/main/me/profile_page.dart';
 import 'package:line/pages/main/me/settings_page.dart';
@@ -64,33 +65,21 @@ class MePage extends StatelessWidget {
           leading: const Icon(Icons.person),
           title: const Text('profile'),
           onTap: () {
-            Get.to(
-              () => ProfilePage(),
-              duration: Duration(milliseconds: 400),
-              transition: Transition.fade,
-            );
+            navigateWithFade(ProfilePage());
           },
         ),
         ListTile(
           leading: const Icon(Icons.settings),
           title: const Text('Settings'),
           onTap: () {
-            Get.to(
-              () => SettingsPage(),
-              duration: Duration(milliseconds: 400),
-              transition: Transition.fade,
-            );
+            navigateWithFade(SettingsPage());
           },
         ),
         ListTile(
           leading: const Icon(Icons.text_snippet_rounded),
           title: const Text('About us'),
           onTap: () {
-            Get.to(
-              () => AboutPage(),
-              duration: Duration(milliseconds: 400),
-              transition: Transition.fade,
-            );
+            navigateWithFade(AboutPage());
           },
         ),
 

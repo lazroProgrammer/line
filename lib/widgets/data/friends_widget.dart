@@ -34,8 +34,8 @@ class FriendsWidget extends StatelessWidget {
           ],
         ),
         Wrap(
-          spacing: 8.0,
-          runSpacing: 8.0,
+          spacing: 0.0,
+          runSpacing: 0.0,
           children: List.generate(
             10,
             (index) => FriendWidget(
