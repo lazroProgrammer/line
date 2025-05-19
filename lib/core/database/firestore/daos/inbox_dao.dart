@@ -5,7 +5,7 @@ import 'package:line/core/database/firestore/firestore_crud.dart';
 class InboxDao extends FirestoreCRUD<Inbox> {
   InboxDao({required super.firestore})
     : super(
-        collectionPath: 'inboxes',
+        collectionPath: Inbox.collectionPath,
         fromJson: Inbox.fromJson,
         toJson: (Inbox user) => user.toJson(),
       );

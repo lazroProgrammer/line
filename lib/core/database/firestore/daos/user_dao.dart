@@ -5,7 +5,7 @@ import 'package:line/core/database/firestore/firestore_crud.dart';
 class UserDao extends FirestoreCRUD<AppUser> {
   UserDao({required super.firestore})
     : super(
-        collectionPath: 'users',
+        collectionPath: AppUser.collectionPath,
         fromJson: AppUser.fromJson,
         toJson: (AppUser user) => user.toJson(),
       );

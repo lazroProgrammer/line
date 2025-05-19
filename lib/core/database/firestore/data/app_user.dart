@@ -1,8 +1,11 @@
+import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:line/core/database/firestore/data_obj.dart';
 import 'package:logger/logger.dart';
 
 Logger log = Logger();
 
-class AppUser {
+class AppUser extends DataObj {
+  static String collectionPath = 'users';
   final String id;
   final String email;
   final String name;
@@ -23,5 +26,10 @@ class AppUser {
 
   Map<String, dynamic> toJson() {
     return {'email': email, 'name': name};
+  }
+
+  @override
+  DocumentReference<Object?> getRef() {
+    return FirebaseFirestore.instance.collection(collectionPath).doc(id);
   }
 }

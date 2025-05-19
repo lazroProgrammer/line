@@ -7,7 +7,7 @@ import 'package:line/core/database/firestore/firestore_crud.dart';
 class FriendDao extends FirestoreCRUD<Friend> {
   FriendDao({required super.firestore})
     : super(
-        collectionPath: 'friend_requests',
+        collectionPath: Friend.collectionPath,
         fromJson: Friend.fromJson,
         toJson: (Friend user) => user.toJson(),
       );

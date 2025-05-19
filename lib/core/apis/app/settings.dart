@@ -8,7 +8,6 @@ class SettingsData {
   static const allowNotificationKey = 'allowNotification';
   static const dailyReminderKey = 'dailyReminder';
   static const msgNotificationKey = 'msgNotification';
-  static const currencyKey = 'preferedCurrency';
   static const regionalTimeKey = 'regionalTime';
   static const dateFormatKey = 'dateFormatKey';
   static const nameKey = 'nameKey';
@@ -22,7 +21,6 @@ class SettingsData {
   late bool dailyReminder;
   late bool msgNotificationReminder;
 
-  late String prefferedCurrency;
   late String regionalTime;
   late String dateFormat;
 
@@ -36,7 +34,6 @@ class SettingsData {
     darkmode = getdark() ?? false;
     allowNotifications = getNotification() ?? false;
     dailyReminder = getDailyReminder() ?? false;
-    prefferedCurrency = getCurrency() ?? "\$";
     msgNotificationReminder = getmsgNotificationReminder() ?? false;
     regionalTime = getRegionalTimeFormat() ?? "dd/MM/yy";
     dateFormat = getDateFormat() ?? "HH:mm";
@@ -58,11 +55,6 @@ class SettingsData {
       await _preferences.setBool(darkmodeKey, b);
 
   static bool? getdark() => _preferences.getBool(darkmodeKey);
-
-  static Future setCurrency(String b) async =>
-      await _preferences.setString(currencyKey, b);
-
-  static String? getCurrency() => _preferences.getString(currencyKey);
 
   static Future setNotification(bool b) async =>
       await _preferences.setBool(allowNotificationKey, b);
@@ -111,7 +103,6 @@ class SettingsData {
     bool? notifications,
     bool? dailyReminderP,
     bool? msgNotificationReminderP,
-    String? currencyP,
     String? regionalTimeP,
     String? dateFormatP,
     String? nameP,
@@ -145,7 +136,6 @@ class SettingsData {
       setmsgNotificationReminder,
       (v) => msgNotificationReminder = v,
     );
-    updateField<String>(currencyP, setCurrency, (v) => prefferedCurrency = v);
     updateField<String>(
       regionalTimeP,
       setRegionalTimeFormat,

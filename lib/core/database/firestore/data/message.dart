@@ -1,9 +1,13 @@
+import 'dart:typed_data';
+
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:line/core/database/firestore/data_obj.dart';
 import 'package:logger/logger.dart';
 
 Logger log = Logger();
 
-class Message {
+class Message extends DataObj {
+  static String collectionPath = "messages";
   final String id;
   final Map<String, dynamic> content;
   final Timestamp createdAt;
@@ -53,5 +57,26 @@ class Message {
       'lastUpdate': lastUpdate,
       'sender': sender,
     };
+  }
+
+  static Map<String, dynamic> getContent(dynamic obj, {String? format}) {
+    String type;
+    String dataType;
+
+    if (obj is String) {
+      type = 'text';
+      dataType = 'text/plain';
+    } else if (obj is Uint8List) {
+      throw UnimplementedError();
+    } else {
+      throw Exception("type not supported");
+    }
+
+    return {"type": type, "data": obj, "dataType": dataType};
+  }
+
+  @override
+  DocumentReference<Object?> getRef() {
+    return FirebaseFirestore.instance.collection(collectionPath).doc(id);
   }
 }

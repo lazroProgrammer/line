@@ -1,9 +1,12 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:line/core/database/firestore/data_obj.dart';
 import 'package:logger/logger.dart';
 
 Logger log = Logger();
 
-class Friend {
+class Friend extends DataObj {
+  static String collectionPath = 'friends';
+
   final String id;
   final Timestamp createdAt;
   final DocumentReference sender;
@@ -32,5 +35,10 @@ class Friend {
 
   Map<String, dynamic> toJson() {
     return {'createdAt': createdAt, 'sender': sender, 'receiver': receiver};
+  }
+
+  @override
+  DocumentReference<Object?> getRef() {
+    return FirebaseFirestore.instance.collection(collectionPath).doc(id);
   }
 }

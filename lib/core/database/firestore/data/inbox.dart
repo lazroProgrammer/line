@@ -1,9 +1,12 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:line/core/database/firestore/data_obj.dart';
 import 'package:logger/logger.dart';
 
 Logger log = Logger();
 
-class Inbox {
+class Inbox extends DataObj {
+  static String collectionPath = 'inboxes';
+
   final String id; // Firestore document ID
   final String lastMessage;
   final Timestamp lastUpdated;
@@ -40,5 +43,10 @@ class Inbox {
       'lastUpdated': lastUpdated,
       'userIDs': userIDs,
     };
+  }
+
+  @override
+  DocumentReference<Object?> getRef() {
+    return FirebaseFirestore.instance.collection(collectionPath).doc(id);
   }
 }

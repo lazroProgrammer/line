@@ -18,10 +18,9 @@ class SentFriendRequestsController extends GetxController {
 
   Future<void> add(FriendRequest request) async {
     try {
-      throw UnimplementedError();
       await dao.add(request, id: request.id);
-      //TODO: you add the value in the table, and change the id to the actual id
       friendRequests.value.add(request);
+      throw UnimplementedError();
     } catch (e) {
       log.e("Error at updating status:$e");
     }

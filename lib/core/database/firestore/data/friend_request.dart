@@ -1,9 +1,12 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:line/core/database/firestore/data_obj.dart';
 import 'package:logger/logger.dart';
 
 Logger log = Logger();
 
-class FriendRequest {
+class FriendRequest extends DataObj {
+  static String collectionPath = 'friend_requests';
+
   final String id;
   final Timestamp createdAt;
   final DocumentReference sender;
@@ -40,5 +43,10 @@ class FriendRequest {
       'receiver': receiver,
       'status': status,
     };
+  }
+
+  @override
+  DocumentReference<Object?> getRef() {
+    return FirebaseFirestore.instance.collection(collectionPath).doc(id);
   }
 }
