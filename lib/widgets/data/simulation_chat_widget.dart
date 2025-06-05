@@ -1,35 +1,32 @@
-import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
-import 'package:line/core/apis/app/settings.dart';
-import 'package:line/core/controllers/data/messages_controller.dart';
+import 'package:line/core/controllers/UI/chat_controller.dart';
 
-class ChatWidget extends StatelessWidget {
-  ChatWidget({super.key, required this.inbox});
-
-  final DocumentReference inbox;
+class SimulationChatWidget extends StatelessWidget {
   final TextEditingController _controller = TextEditingController();
+  final ChatController chatController = Get.put(ChatController());
+
+  SimulationChatWidget({super.key});
 
   @override
   Widget build(BuildContext context) {
-    final MessagesController messagesController = Get.put(
-      MessagesController(inbox),
-    );
     return Column(
       children: [
         Expanded(
-          child: Obx(() {
-            final messages = messagesController.messages.value;
-            return ListView.builder(
+          child: Obx(
+            () => ListView.builder(
               padding: const EdgeInsets.all(14.0),
-              itemCount: messages.length,
+              itemCount: chatController.messages.length,
               itemBuilder: (context, index) {
-                final message = messages[index];
-                final isUser = message.sender.id == SettingsData().userID;
+                final message = chatController.messages[index];
                 final alignment =
-                    isUser ? Alignment.centerRight : Alignment.centerLeft;
-                final color = isUser ? Colors.blueAccent : Colors.grey[300];
-                final textColor = isUser ? Colors.white : Colors.black87;
+                    message.isUser
+                        ? Alignment.centerRight
+                        : Alignment.centerLeft;
+                final color =
+                    message.isUser ? Colors.blueAccent : Colors.grey[300];
+                final textColor =
+                    message.isUser ? Colors.white : Colors.black87;
                 return Align(
                   alignment: alignment,
                   child: Container(
@@ -46,15 +43,14 @@ class ChatWidget extends StatelessWidget {
                       borderRadius: BorderRadius.circular(12),
                     ),
                     child: Text(
-                      //TODO: to be changed later
-                      message.content["data"] as String,
+                      message.text,
                       style: TextStyle(color: textColor, fontSize: 16),
                     ),
                   ),
                 );
               },
-            );
-          }),
+            ),
+          ),
         ),
         Divider(height: 1),
         Padding(
@@ -84,6 +80,7 @@ class ChatWidget extends StatelessWidget {
   }
 
   void _sendMessage() {
+    chatController.sendMessage(_controller.text);
     _controller.clear();
   }
 }

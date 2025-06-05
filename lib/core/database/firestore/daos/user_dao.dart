@@ -65,4 +65,18 @@ class UserDao extends FirestoreCRUD<AppUser> {
         .map((doc) => fromJson(doc.data(), doc.id))
         .toList();
   }
+
+  Future<List<AppUser>> getByIDs(
+    List<String> ids, {
+    DocumentSnapshot? lastVisibleMessage,
+  }) async {
+    final query = firestore
+        .collection(collectionPath)
+        .where('id', whereIn: ids);
+    final querySnapshot = await query.get();
+
+    return querySnapshot.docs
+        .map((doc) => fromJson(doc.data(), doc.id))
+        .toList();
+  }
 }

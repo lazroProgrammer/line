@@ -1,7 +1,6 @@
 import 'package:email_validator/email_validator.dart';
 import 'package:flutter/material.dart';
-import 'package:get/get_state_manager/get_state_manager.dart';
-import 'package:get/instance_manager.dart';
+import 'package:get/get.dart';
 import 'package:line/core/apis/app/connectivity.dart';
 import 'package:line/core/apis/firebase/auth.dart';
 import 'package:line/core/controllers/UI/toggle_controller.dart';

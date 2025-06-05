@@ -8,3 +8,7 @@ void navigateWithFade(Widget page) {
     transition: Transition.fade,
   );
 }
+
+void normalNavigation(BuildContext context, Widget widget) {
+  Navigator.of(context).push(MaterialPageRoute(builder: (context) => widget));
+}

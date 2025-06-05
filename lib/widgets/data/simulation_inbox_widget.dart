@@ -1,12 +1,20 @@
 import 'package:flutter/material.dart';
-import 'package:line/core/database/firestore/data/app_user.dart';
-import 'package:line/core/database/firestore/data/inbox.dart';
 
 class InboxWidget extends StatelessWidget {
-  final Inbox inbox;
-  final AppUser user;
+  final String userName;
+  final String lastMessage;
+  final String time;
+  final int unreadCount;
+  final String avatarUrl;
 
-  InboxWidget({super.key, required this.inbox, required this.user});
+  InboxWidget({
+    super.key,
+    required this.userName,
+    required this.lastMessage,
+    required this.time,
+    required this.unreadCount,
+    required this.avatarUrl,
+  });
 
   final List<Color> _avatarColors = [
     Colors.redAccent,
@@ -14,8 +22,8 @@ class InboxWidget extends StatelessWidget {
     Colors.orangeAccent,
     Colors.deepOrangeAccent,
     Colors.amber,
-    Colors.yellow,
-    Colors.lime,
+    Colors.yellow.shade700,
+    Colors.lime.shade600,
     Colors.lightGreen,
     Colors.green,
     Colors.teal,
@@ -25,7 +33,7 @@ class InboxWidget extends StatelessWidget {
     Colors.indigoAccent,
     Colors.purpleAccent,
     Colors.deepPurpleAccent,
-    Colors.grey,
+    Colors.grey.shade600,
   ];
 
   Color getColorFromName(String name) {
@@ -49,7 +57,7 @@ class InboxWidget extends StatelessWidget {
           children: [
             CircleAvatar(
               radius: 40,
-              backgroundColor: getColorFromName(user.name),
+              backgroundColor: getColorFromName(userName),
               child: Icon(Icons.person, size: 50),
             ),
             const SizedBox(width: 12),
@@ -61,7 +69,7 @@ class InboxWidget extends StatelessWidget {
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
                     Text(
-                      user.name,
+                      userName,
                       style: const TextStyle(
                         fontWeight: FontWeight.bold,
                         fontSize: 16,
@@ -71,7 +79,7 @@ class InboxWidget extends StatelessWidget {
                     ),
                     const SizedBox(height: 6),
                     Text(
-                      inbox.lastMessage,
+                      lastMessage,
                       style: const TextStyle(color: Colors.grey),
                       maxLines: 2,
                       overflow: TextOverflow.ellipsis,
@@ -87,25 +95,25 @@ class InboxWidget extends StatelessWidget {
                 crossAxisAlignment: CrossAxisAlignment.end,
                 children: [
                   Text(
-                    inbox.lastUpdated.toDate().toIso8601String(),
+                    time,
                     style: const TextStyle(color: Colors.grey, fontSize: 12),
                   ),
-                  // if (unreadCount > 0)
-                  //   Container(
-                  //     margin: const EdgeInsets.only(top: 8),
-                  //     padding: const EdgeInsets.all(10),
-                  //     decoration: const BoxDecoration(
-                  //       color: Colors.red,
-                  //       shape: BoxShape.circle,
-                  //     ),
-                  //     child: Text(
-                  //       unreadCount.toString(),
-                  //       style: const TextStyle(
-                  //         color: Colors.white,
-                  //         fontSize: 12,
-                  //       ),
-                  //     ),
-                  //   ),
+                  if (unreadCount > 0)
+                    Container(
+                      margin: const EdgeInsets.only(top: 8),
+                      padding: const EdgeInsets.all(10),
+                      decoration: const BoxDecoration(
+                        color: Colors.red,
+                        shape: BoxShape.circle,
+                      ),
+                      child: Text(
+                        unreadCount.toString(),
+                        style: const TextStyle(
+                          color: Colors.white,
+                          fontSize: 12,
+                        ),
+                      ),
+                    ),
                 ],
               ),
             ),

@@ -25,7 +25,36 @@ class FriendsRequestPage extends StatelessWidget {
                     style: TextStyle(fontSize: 22, fontWeight: FontWeight.w600),
                   ),
                 )
-                : FriendsRequestsWidget();
+                : Column(
+                  children: [
+                    SizedBox(height: 8),
+                    Text("received requests", style: TextStyle(fontSize: 24)),
+                    SizedBox(
+                      height: MediaQuery.of(context).size.height / 2,
+                      child: Obx(
+                        () => ListView.builder(
+                          itemCount:
+                              requestsController.friendRequests.value.length,
+                          itemBuilder:
+                              (context, index) => FriendsRequestsWidget(
+                                friendRequest:
+                                    requestsController
+                                        .friendRequests
+                                        .value[index],
+                                user: requestsController.users.value.firstWhere(
+                                  (element) =>
+                                      requestsController
+                                          .friendRequests
+                                          .value[index]
+                                          .receiver ==
+                                      element.getRef(),
+                                ),
+                              ),
+                        ),
+                      ),
+                    ),
+                  ],
+                );
           }),
         ),
       ),

@@ -45,6 +45,17 @@ class FriendRequest extends DataObj {
     };
   }
 
+  static List<String> getUsers(
+    List<FriendRequest> friendRequests, {
+    required bool isSender,
+  }) {
+    List<String> e = [];
+    for (var element in friendRequests) {
+      e.add(isSender ? element.sender.id : element.receiver.id);
+    }
+    return e;
+  }
+
   @override
   DocumentReference<Object?> getRef() {
     return FirebaseFirestore.instance.collection(collectionPath).doc(id);

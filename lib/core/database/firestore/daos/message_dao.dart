@@ -26,10 +26,30 @@ class MessageDao extends FirestoreCRUD<Message> {
             : await query.startAfterDocument(lastVisibleMessage).get();
 
     final messages =
-        querySnapshot.docs.map((doc) => fromJson(doc.data(), doc.id)).toList();
+        querySnapshot.docs
+            .map((doc) => Message.fromJson(doc.data(), doc.id))
+            .toList();
     final lastDoc =
         querySnapshot.docs.isNotEmpty ? querySnapshot.docs.last : null;
 
     return (messages, lastDoc);
+  }
+
+  Stream<List<Message>> listenToMessagesOfInbox(
+    DocumentReference inbox,
+    Timestamp latestLocalMessageTimestamp,
+  ) {
+    final query = FirebaseFirestore.instance
+        .collection('messages')
+        .where('inboxRef', isEqualTo: inbox)
+        .orderBy('timestamp')
+        .startAfter([latestLocalMessageTimestamp]);
+
+    return query.snapshots().map((snapshot) {
+      return snapshot.docChanges
+          .where((change) => change.type == DocumentChangeType.added)
+          .map((change) => Message.fromJson(change.doc.data()!, change.doc.id))
+          .toList();
+    });
   }
 }

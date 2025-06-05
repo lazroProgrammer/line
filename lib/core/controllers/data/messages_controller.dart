@@ -1,3 +1,5 @@
+import 'dart:async';
+
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:get/get.dart';
 import 'package:line/core/apis/app/settings.dart';
@@ -9,6 +11,7 @@ class MessagesController extends GetxController {
   late Rx<List<m.Message>> messages;
   late Rx<DocumentReference<Object?>> inbox;
   late Rx<DocumentSnapshot<Object?>?> lastDoc;
+  StreamSubscription<List<m.Message>>? _subscription;
 
   final MessageDao dao = MessageDao(firestore: FirebaseFirestore.instance);
 
@@ -54,5 +57,25 @@ class MessagesController extends GetxController {
       await dao.delete(id);
       messages.value.removeWhere((r) => r.id == id);
     } catch (e) {}
+  }
+
+  void startListening(DocumentReference inbox, Timestamp latestTimestamp) {
+    _subscription?.cancel();
+    _subscription = dao.listenToMessagesOfInbox(inbox, latestTimestamp).listen((
+      newMsgs,
+    ) {
+      messages.value.addAll(newMsgs);
+    });
+  }
+
+  void stopListening() {
+    _subscription?.cancel();
+    _subscription = null;
+  }
+
+  @override
+  void onClose() {
+    stopListening();
+    super.onClose();
   }
 }

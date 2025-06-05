@@ -10,7 +10,7 @@ class InboxDao extends FirestoreCRUD<Inbox> {
         toJson: (Inbox user) => user.toJson(),
       );
 
-  Future<List<Inbox>> getByUser(
+  Future<(List<Inbox>, DocumentSnapshot?)> getByUser(
     String userID, {
     DocumentSnapshot? lastVisibleMessage,
   }) async {
@@ -24,8 +24,13 @@ class InboxDao extends FirestoreCRUD<Inbox> {
             ? await query.get()
             : await query.startAfterDocument(lastVisibleMessage).get();
 
-    return querySnapshot.docs
-        .map((doc) => fromJson(doc.data(), doc.id))
-        .toList();
+    final messages =
+        querySnapshot.docs
+            .map((doc) => Inbox.fromJson(doc.data(), doc.id))
+            .toList();
+    final lastDoc =
+        querySnapshot.docs.isNotEmpty ? querySnapshot.docs.last : null;
+
+    return (messages, lastDoc);
   }
 }

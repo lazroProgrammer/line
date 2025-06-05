@@ -3,12 +3,12 @@ import 'dart:typed_data';
 
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
-import 'package:intl/intl.dart';
 import 'package:line/core/controllers/UI/toggle_controller.dart';
 import 'package:line/core/controllers/settings/daily_reminder_controller.dart';
 import 'package:line/core/controllers/settings/msg_notification_reminder.dart';
 import 'package:line/core/controllers/settings/time_format_controller.dart';
 import 'package:line/pages/main/me/settings/terms_of_use.dart';
+import 'package:line/widgets/formatted_time.dart';
 import 'package:line/widgets/settings/settings_group.dart';
 import 'package:path_provider/path_provider.dart';
 
@@ -20,10 +20,8 @@ class SettingsPage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final ToggleController darkmode = Get.find(tag: "dark");
-    final DailyReminderController dailyReminderC = Get.put(
-      DailyReminderController(),
-    );
-    final MsgNotificationReminderController msgNotificationReminderC = Get.put(
+    final ToggleController dailyReminderC = Get.put(DailyReminderController());
+    final ToggleController msgNotificationReminderC = Get.put(
       MsgNotificationReminderController(),
     );
     final TimeFormatController timeFormatController = Get.put(
@@ -174,9 +172,10 @@ class SettingsPage extends StatelessWidget {
                               ),
                               TextSpan(text: " will be shown like this: "),
                               TextSpan(
-                                text: DateFormat(
+                                text: formatedTime(
                                   "${selectedDate.value} ${selectedTime.value}",
-                                ).format(exampleDate),
+                                  exampleDate,
+                                ),
                                 style: TextStyle(
                                   fontWeight: FontWeight.w500,
                                   color:

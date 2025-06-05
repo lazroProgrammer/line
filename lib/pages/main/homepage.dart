@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:line/core/controllers/UI/inbox_controller.dart';
-import 'package:line/widgets/data/inbox_widget.dart';
+import 'package:line/widgets/data/simulation_inbox_widget.dart';
 import 'package:line/widgets/skeltons/skelton.dart';
 
 class Homepage extends StatelessWidget {

@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:line/widgets/data/Friend_widget.dart';
+import 'package:line/widgets/data/friend_widget.dart';
 
 class FriendsWidget extends StatelessWidget {
   const FriendsWidget({super.key});
