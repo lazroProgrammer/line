@@ -5,9 +5,12 @@ import 'package:line/core/database/firestore/data/app_user.dart';
 
 class UserSearchController extends GetxController {
   RxString query = ''.obs;
-  RxList<AppUser> results = <AppUser>[].obs;
+  late Rx<List<AppUser>> results;
   RxBool isLoading = false.obs;
   final UserDao userDao = UserDao(firestore: FirebaseFirestore.instance);
+  UserSearchController() {
+    results = Rx([]);
+  }
 
   void onQueryChanged(String input) {
     query.value = input.trim();
@@ -19,7 +22,7 @@ class UserSearchController extends GetxController {
         searchByName(query.value);
       }
     } else {
-      results.clear();
+      results.value.clear();
     }
   }
 
@@ -27,7 +30,8 @@ class UserSearchController extends GetxController {
     isLoading.value = true;
     try {
       final res = await userDao.getByName(name);
-      results.assignAll(res);
+      results.value.clear();
+      results.value.addAll(res);
     } finally {
       isLoading.value = false;
     }
@@ -37,7 +41,8 @@ class UserSearchController extends GetxController {
     isLoading.value = true;
     try {
       final res = await userDao.getByEmailSearch(email);
-      results.assignAll(res);
+      results.value.clear();
+      results.value.addAll(res);
     } finally {
       isLoading.value = false;
     }

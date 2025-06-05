@@ -2,7 +2,7 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:logger/logger.dart';
 
 Logger log = Logger();
-Future<UserCredential> signInWithEmail(String email, String password) async {
+Future<UserCredential?> signInWithEmail(String email, String password) async {
   try {
     return await FirebaseAuth.instance.signInWithEmailAndPassword(
       email: email.trim(),
@@ -13,15 +13,22 @@ Future<UserCredential> signInWithEmail(String email, String password) async {
     log.e('Code: ${e.code}');
     log.e('${e.runtimeType}');
     log.e('Message: ${e.message}');
-    rethrow;
   }
+  return null;
 }
 
 Future<UserCredential> signUpWithEmail(String email, String password) async {
-  return await FirebaseAuth.instance.createUserWithEmailAndPassword(
-    email: email,
-    password: password,
-  );
+  try {
+    return await FirebaseAuth.instance.createUserWithEmailAndPassword(
+      email: email,
+      password: password,
+    );
+  } on FirebaseAuthException catch (e) {
+    //TODO: needs real handling of exceptions here
+    log.e('Code: ${e.code}');
+    log.e('Message: ${e.message}');
+    rethrow;
+  }
 }
 
 Future<void> signOut() async {

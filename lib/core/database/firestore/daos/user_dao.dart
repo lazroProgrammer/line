@@ -10,16 +10,15 @@ class UserDao extends FirestoreCRUD<AppUser> {
         toJson: (AppUser user) => user.toJson(),
       );
 
-  Future<List<AppUser>> getByEmailAuth(String email) async {
+  Future<AppUser> getByEmailAuth(String email) async {
     final querySnapshot =
         await firestore
             .collection(collectionPath)
             .where('email', isEqualTo: email)
+            .limit(1)
             .get();
 
-    return querySnapshot.docs
-        .map((doc) => fromJson(doc.data(), doc.id))
-        .toList();
+    return querySnapshot.docs.map((doc) => fromJson(doc.data(), doc.id)).first;
   }
 
   Future<List<AppUser>> getByName(
@@ -66,17 +65,19 @@ class UserDao extends FirestoreCRUD<AppUser> {
         .toList();
   }
 
-  Future<List<AppUser>> getByIDs(
-    List<String> ids, {
-    DocumentSnapshot? lastVisibleMessage,
-  }) async {
-    final query = firestore
-        .collection(collectionPath)
-        .where('id', whereIn: ids);
-    final querySnapshot = await query.get();
+  Future<List<AppUser>> getByIDs(List<String> ids) async {
+    if (ids.isEmpty) return [];
 
-    return querySnapshot.docs
-        .map((doc) => fromJson(doc.data(), doc.id))
-        .toList();
+    final futures =
+        ids.map((id) async {
+          final doc = await firestore.collection(collectionPath).doc(id).get();
+          if (doc.exists) {
+            return fromJson(doc.data()!, doc.id);
+          }
+          return null;
+        }).toList();
+
+    final users = await Future.wait(futures);
+    return users.whereType<AppUser>().toList(); // remove nulls
   }
 }

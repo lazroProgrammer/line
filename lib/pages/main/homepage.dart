@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
-import 'package:line/core/controllers/UI/inbox_controller.dart';
+import 'package:line/core/controllers/data/inboxes_controller.dart';
+import 'package:line/widgets/data/inbox_widget.dart';
 import 'package:line/widgets/data/simulation_inbox_widget.dart';
 import 'package:line/widgets/skeltons/skelton.dart';
 
@@ -9,12 +10,18 @@ class Homepage extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final inboxController = Get.put(InboxController());
+    final InboxesController inboxesController = Get.put(InboxesController());
     return Obx(() {
-      return inboxController.isLoaded.value
+      final inboxes = inboxesController.inboxes.value;
+      final users = inboxesController.users.value;
+      return inboxesController.isLoaded.value
           ? ListView.builder(
-            itemCount: inboxWidgets.length,
-            itemBuilder: (context, index) => inboxWidgets[index],
+            itemCount: inboxes.length,
+            itemBuilder:
+                (context, index) => InboxWidget(
+                  inbox: inboxes[index],
+                  user: users[inboxes[index].id]!,
+                ),
           )
           : ListView.builder(
             itemCount: 8,
@@ -25,7 +32,7 @@ class Homepage extends StatelessWidget {
 }
 
 final inboxWidgets = [
-  InboxWidget(
+  SimulationInboxWidget(
     userName: 'Alice',
     lastMessage:
         'Hey! Are you free tomorrow? We could get some coffee and hang out!',
@@ -33,7 +40,7 @@ final inboxWidgets = [
     unreadCount: 3,
     avatarUrl: 'https://example.com/avatar_alice.jpg',
   ),
-  InboxWidget(
+  SimulationInboxWidget(
     userName: 'Brian',
     lastMessage:
         'Got the files you sent. Will go through them this evening after dinner.',
@@ -41,7 +48,7 @@ final inboxWidgets = [
     unreadCount: 1,
     avatarUrl: 'https://example.com/avatar_brian.jpg',
   ),
-  InboxWidget(
+  SimulationInboxWidget(
     userName: 'Clara',
     lastMessage:
         'Don\'t forget the meeting at 10. I\'ll send a quick reminder later too.',
@@ -49,7 +56,7 @@ final inboxWidgets = [
     unreadCount: 0,
     avatarUrl: 'https://example.com/avatar_clara.jpg',
   ),
-  InboxWidget(
+  SimulationInboxWidget(
     userName: 'David',
     lastMessage:
         'Yes, that\'s exactly what I meant! We should try that new sushi place next week.',
@@ -57,7 +64,7 @@ final inboxWidgets = [
     unreadCount: 5,
     avatarUrl: 'https://example.com/avatar_david.jpg',
   ),
-  InboxWidget(
+  SimulationInboxWidget(
     userName: 'Ella',
     lastMessage:
         'See you at the station in 15. Let me know if you\'re running late.',
@@ -65,7 +72,7 @@ final inboxWidgets = [
     unreadCount: 0,
     avatarUrl: 'https://example.com/avatar_ella.jpg',
   ),
-  InboxWidget(
+  SimulationInboxWidget(
     userName: 'Farid',
     lastMessage:
         'Meeting pushed to Thursday. Please update the calendar and notify the others.',
@@ -73,7 +80,7 @@ final inboxWidgets = [
     unreadCount: 2,
     avatarUrl: 'https://example.com/avatar_farid.jpg',
   ),
-  InboxWidget(
+  SimulationInboxWidget(
     userName: 'Gwen',
     lastMessage:
         'Your package arrived! It\'s at the front desk, and it looks kind of heavy.',
@@ -81,7 +88,7 @@ final inboxWidgets = [
     unreadCount: 7,
     avatarUrl: 'https://example.com/avatar_gwen.jpg',
   ),
-  InboxWidget(
+  SimulationInboxWidget(
     userName: 'james',
     lastMessage: 'Hey let\'s have a pizza party this weekend.',
     time: '11:30 PM',

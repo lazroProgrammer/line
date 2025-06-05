@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
-import 'package:line/core/controllers/data/sent_friend_requests_controller.dart';
-import 'package:line/widgets/data/friends_requests_widget.dart';
+import 'package:line/core/controllers/UI/user_search_controller.dart';
+import 'package:line/widgets/data/user_search_widget.dart';
 import 'package:line/widgets/search_widget.dart';
 
 class AddFriendsPage extends StatelessWidget {
@@ -9,9 +9,8 @@ class AddFriendsPage extends StatelessWidget {
   //TODO:not fully implemented
   @override
   Widget build(BuildContext context) {
-    final SentFriendRequestsController requestsController = Get.put(
-      SentFriendRequestsController(),
-      tag: "sentRequests",
+    final UserSearchController resultController = Get.put(
+      UserSearchController(),
     );
     return SafeArea(
       child: Scaffold(
@@ -22,28 +21,23 @@ class AddFriendsPage extends StatelessWidget {
             children: [
               SearchWidget(),
               SizedBox(height: 8),
-              Text("sent requests", style: TextStyle(fontSize: 24)),
-              SizedBox(
-                height: MediaQuery.of(context).size.height / 2,
-                child: Obx(
-                  () => ListView.builder(
-                    itemCount: requestsController.friendRequests.value.length,
-                    itemBuilder:
-                        (context, index) => FriendsRequestsWidget(
-                          friendRequest:
-                              requestsController.friendRequests.value[index],
-                          user: requestsController.users.value.firstWhere(
-                            (element) =>
-                                requestsController
-                                    .friendRequests
-                                    .value[index]
-                                    .receiver ==
-                                element.getRef(),
-                          ),
-                        ),
-                  ),
-                ),
-              ),
+              Obx(() {
+                final isLoading = resultController.isLoading.value;
+                return isLoading
+                    ? Expanded(
+                      child: Center(child: CircularProgressIndicator()),
+                    )
+                    : SizedBox(
+                      height: MediaQuery.of(context).size.height * 2 / 3,
+                      child: ListView.builder(
+                        itemCount: resultController.results.value.length,
+                        itemBuilder:
+                            (context, index) => UserSearchWidget(
+                              user: resultController.results.value[index],
+                            ),
+                      ),
+                    );
+              }),
             ],
           ),
         ),

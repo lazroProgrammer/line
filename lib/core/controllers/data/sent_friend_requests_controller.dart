@@ -28,13 +28,13 @@ class SentFriendRequestsController extends UsersRefController {
 
   Future<void> add(u.AppUser user) async {
     final request = FriendRequest(
-      createdAt: DateTime.timestamp() as Timestamp,
+      createdAt: Timestamp.fromDate(DateTime.timestamp()),
       sender: SettingsData().getUser().getRef(),
       receiver: user.getRef(),
       status: "pending",
     );
     try {
-      await dao.add(request, id: request.id);
+      await dao.add(request);
       friendRequests.value.add(request);
       await getUsers(
         FriendRequest.getUsers(friendRequests.value, isSender: false),

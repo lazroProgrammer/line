@@ -4,19 +4,24 @@ import 'package:line/core/database/firestore/daos/user_dao.dart';
 import 'package:line/core/database/firestore/data/app_user.dart';
 
 class UsersRefController extends GetxController {
-  late Rx<List<AppUser>> users;
-  UserDao userDao = UserDao(firestore: FirebaseFirestore.instance);
+  late Rx<Map<String, AppUser>> users;
+  final UserDao userDao = UserDao(firestore: FirebaseFirestore.instance);
 
   UsersRefController() {
-    users = Rx([]);
+    users = Rx({});
   }
 
   Future<void> getUsers(List<String> allIDs) async {
-    final allIds = allIDs;
-    final fetchedIds = users.value.map((element) => element.id).toList();
+    if (allIDs.isEmpty) return;
+    final idsToFetch =
+        allIDs.where((id) => !users.value.containsKey(id)).toList();
 
-    final ids = allIds.where((id) => !fetchedIds.contains(id)).toList();
-    final list = await userDao.getByIDs(ids);
-    users.value.addAll(list);
+    if (idsToFetch.isEmpty) return;
+
+    final newUsers = await userDao.getByIDs(idsToFetch);
+    for (final user in newUsers) {
+      users.value[user.id] = user;
+    }
+    users.refresh();
   }
 }

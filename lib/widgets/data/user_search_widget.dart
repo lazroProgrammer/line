@@ -1,29 +1,28 @@
 import 'package:flutter/material.dart';
+import 'package:get/get.dart';
+import 'package:line/core/apis/app/connectivity.dart';
+import 'package:line/core/controllers/data/sent_friend_requests_controller.dart';
+import 'package:line/core/database/firestore/data/app_user.dart';
+import 'package:line/widgets/frequent_toasts.dart';
 
-class SimulationInboxWidget extends StatelessWidget {
-  final String userName;
-  final String lastMessage;
-  final String time;
-  final int unreadCount;
-  final String avatarUrl;
+class UserSearchWidget extends StatefulWidget {
+  final AppUser user;
 
-  SimulationInboxWidget({
-    super.key,
-    required this.userName,
-    required this.lastMessage,
-    required this.time,
-    required this.unreadCount,
-    required this.avatarUrl,
-  });
+  const UserSearchWidget({super.key, required this.user});
 
+  @override
+  State<UserSearchWidget> createState() => _UserSearchWidgetState();
+}
+
+class _UserSearchWidgetState extends State<UserSearchWidget> {
   final List<Color> _avatarColors = [
     Colors.redAccent,
     Colors.pinkAccent,
     Colors.orangeAccent,
     Colors.deepOrangeAccent,
     Colors.amber,
-    Colors.yellow.shade700,
-    Colors.lime.shade600,
+    Colors.yellow,
+    Colors.lime,
     Colors.lightGreen,
     Colors.green,
     Colors.teal,
@@ -33,7 +32,7 @@ class SimulationInboxWidget extends StatelessWidget {
     Colors.indigoAccent,
     Colors.purpleAccent,
     Colors.deepPurpleAccent,
-    Colors.grey.shade600,
+    Colors.grey,
   ];
 
   Color getColorFromName(String name) {
@@ -44,8 +43,12 @@ class SimulationInboxWidget extends StatelessWidget {
     return _avatarColors[hash % _avatarColors.length];
   }
 
+  bool isSent = false;
   @override
   Widget build(BuildContext context) {
+    final SentFriendRequestsController requestController = Get.put(
+      SentFriendRequestsController(),
+    );
     return InkWell(
       onTap: () {
         // navigateWithFade(ChatPage());
@@ -57,7 +60,7 @@ class SimulationInboxWidget extends StatelessWidget {
           children: [
             CircleAvatar(
               radius: 40,
-              backgroundColor: getColorFromName(userName),
+              backgroundColor: getColorFromName(widget.user.name),
               child: Icon(Icons.person, size: 50),
             ),
             const SizedBox(width: 12),
@@ -69,7 +72,7 @@ class SimulationInboxWidget extends StatelessWidget {
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
                     Text(
-                      userName,
+                      widget.user.name,
                       style: const TextStyle(
                         fontWeight: FontWeight.bold,
                         fontSize: 16,
@@ -79,7 +82,7 @@ class SimulationInboxWidget extends StatelessWidget {
                     ),
                     const SizedBox(height: 6),
                     Text(
-                      lastMessage,
+                      widget.user.email,
                       style: const TextStyle(color: Colors.grey),
                       maxLines: 2,
                       overflow: TextOverflow.ellipsis,
@@ -88,33 +91,31 @@ class SimulationInboxWidget extends StatelessWidget {
                 ),
               ),
             ),
-            Padding(
-              padding: const EdgeInsets.only(top: 4.0),
-              child: Column(
-                mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                crossAxisAlignment: CrossAxisAlignment.end,
-                children: [
-                  Text(
-                    time,
-                    style: const TextStyle(color: Colors.grey, fontSize: 12),
-                  ),
-                  if (unreadCount > 0)
-                    Container(
-                      margin: const EdgeInsets.only(top: 8),
-                      padding: const EdgeInsets.all(10),
-                      decoration: const BoxDecoration(
-                        color: Colors.red,
-                        shape: BoxShape.circle,
-                      ),
-                      child: Text(
-                        unreadCount.toString(),
-                        style: const TextStyle(
-                          color: Colors.white,
-                          fontSize: 12,
-                        ),
-                      ),
-                    ),
-                ],
+            Obx(
+              () => IconButton(
+                onPressed:
+                    //TODO: see if user have been sent a request before and see if the user have already an inbox with the user
+                    (isSent ||
+                            requestController.users.value.containsKey(widget.user.id))
+                        ? null
+                        : () {
+                          Connection.internetConnection().then((connection) {
+                            if (connection) {
+                              try {
+                                requestController.add(widget.user).then((_) {
+                                  setState(() {
+                                    isSent = true;
+                                  });
+                                });
+                              } catch (e) {
+                                print(e);
+                              }
+                            } else {
+                              checkConnectionMsg();
+                            }
+                          });
+                        },
+                icon: Icon(Icons.add, size: 30),
               ),
             ),
           ],

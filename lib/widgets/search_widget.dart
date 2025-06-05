@@ -51,10 +51,14 @@ class _SearchWidgetState extends State<SearchWidget> {
             ),
             // onTap: () => controller.openView(),
             // onChanged: (_) {}, // No throttle/search on change
-            onSubmitted: _onSubmitted, // Triggers when hitting enter
+            onSubmitted: (text) async {
+              await _onSubmitted(text);
+            }, // Triggers when hitting enter
             leading: IconButton(
               icon: const Icon(Icons.search),
-              onPressed: _onSubmitted,
+              onPressed: () async {
+                await _onSubmitted(controller.text);
+              },
             ),
           );
         },

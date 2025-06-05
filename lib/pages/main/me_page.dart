@@ -5,6 +5,7 @@ import 'package:line/core/apis/firebase/auth.dart';
 import 'package:line/core/controllers/UI/toggle_controller.dart';
 import 'package:line/core/controllers/data/user_data_controller.dart';
 import 'package:line/generic_fonctions.dart';
+import 'package:line/pages/login/login_page.dart';
 import 'package:line/pages/main/me/about_page.dart';
 import 'package:line/pages/main/me/profile_page.dart';
 import 'package:line/pages/main/me/settings_page.dart';
@@ -91,7 +92,13 @@ class MePage extends StatelessWidget {
             Connection.internetConnection().then((value) {
               // usr!.exportData(usr.id);
               // User.signOut();
-              signOut().then((v) {});
+              signOut().then((v) async {
+                userController.logout().then((_) {
+                  Navigator.of(context).pushReplacement(
+                    MaterialPageRoute(builder: (context) => LoginPage()),
+                  );
+                });
+              });
             });
           },
         ),

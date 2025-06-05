@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:line/core/controllers/data/received_friend_requests_controller.dart';
+import 'package:line/core/controllers/data/sent_friend_requests_controller.dart';
 import 'package:line/widgets/data/friends_requests_widget.dart';
 
 class FriendsRequestPage extends StatelessWidget {
@@ -8,8 +9,11 @@ class FriendsRequestPage extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final ReceivedFriendRequestsController requestsController = Get.put(
+    final ReceivedFriendRequestsController receivedRequestsController = Get.put(
       ReceivedFriendRequestsController(),
+    );
+    final SentFriendRequestsController sentRequestsController = Get.put(
+      SentFriendRequestsController(),
     );
     return SafeArea(
       child: Scaffold(
@@ -17,7 +21,8 @@ class FriendsRequestPage extends StatelessWidget {
         body: Padding(
           padding: const EdgeInsets.symmetric(horizontal: 12.0, vertical: 8),
           child: Obx(() {
-            final receivedRequests = requestsController.friendRequests.value;
+            final receivedRequests =
+                receivedRequestsController.friendRequests.value;
             return (receivedRequests.isEmpty)
                 ? Center(
                   child: Text(
@@ -28,27 +33,60 @@ class FriendsRequestPage extends StatelessWidget {
                 : Column(
                   children: [
                     SizedBox(height: 8),
+                    Text("sent requests", style: TextStyle(fontSize: 24)),
+                    SizedBox(
+                      height: MediaQuery.of(context).size.height / 2,
+                      child: Obx(
+                        () => ListView.builder(
+                          itemCount:
+                              sentRequestsController
+                                  .friendRequests
+                                  .value
+                                  .length,
+                          itemBuilder:
+                              (context, index) => FriendsRequestsWidget(
+                                friendRequest:
+                                    sentRequestsController
+                                        .friendRequests
+                                        .value[index],
+                                user:
+                                    sentRequestsController
+                                        .users
+                                        .value[sentRequestsController
+                                        .friendRequests
+                                        .value[index]
+                                        .receiver
+                                        .id]!,
+                              ),
+                        ),
+                      ),
+                    ),
+                    SizedBox(height: 8),
                     Text("received requests", style: TextStyle(fontSize: 24)),
                     SizedBox(
                       height: MediaQuery.of(context).size.height / 2,
                       child: Obx(
                         () => ListView.builder(
                           itemCount:
-                              requestsController.friendRequests.value.length,
+                              receivedRequestsController
+                                  .friendRequests
+                                  .value
+                                  .length,
                           itemBuilder:
                               (context, index) => FriendsRequestsWidget(
                                 friendRequest:
-                                    requestsController
+                                    receivedRequestsController
                                         .friendRequests
                                         .value[index],
-                                user: requestsController.users.value.firstWhere(
-                                  (element) =>
-                                      requestsController
-                                          .friendRequests
-                                          .value[index]
-                                          .receiver ==
-                                      element.getRef(),
-                                ),
+
+                                user:
+                                    receivedRequestsController
+                                        .users
+                                        .value[receivedRequestsController
+                                        .friendRequests
+                                        .value[index]
+                                        .sender
+                                        .id]!,
                               ),
                         ),
                       ),

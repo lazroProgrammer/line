@@ -9,23 +9,28 @@ import 'package:line/core/database/firestore/data/inbox.dart';
 class InboxesController extends UsersRefController {
   late Rx<List<Inbox>> inboxes;
   late Rx<DocumentSnapshot<Object?>?> lastDoc;
+  late RxBool isLoaded;
   InboxDao dao = InboxDao(firestore: FirebaseFirestore.instance);
   InboxesController() {
     inboxes = Rx([]);
+    isLoaded = false.obs;
+    lastDoc = Rx(null);
     getInboxes().then((_) {});
   }
 
   Future<void> getInboxes() async {
+    isLoaded.value = false;
     final (a, b) = await dao.getByUser(SettingsData().getUser().id);
 
     inboxes.value = a;
     lastDoc.value = b;
     await getUsers(_getInboxSecondUser());
+    isLoaded.value = true;
   }
 
   Future<void> add(u.AppUser user) async {
     final inbox = Inbox(
-      lastUpdated: DateTime.timestamp() as Timestamp,
+      lastUpdated: Timestamp.now(),
       userIDs: [SettingsData().getUser().getRef(), user.getRef()],
       lastMessage: "",
     );

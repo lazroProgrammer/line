@@ -6,6 +6,8 @@ import 'package:get/instance_manager.dart';
 import 'package:line/core/apis/app/connectivity.dart';
 import 'package:line/core/apis/firebase/auth.dart';
 import 'package:line/core/controllers/UI/toggle_controller.dart';
+import 'package:line/core/controllers/data/user_data_controller.dart';
+import 'package:line/core/database/firestore/data/app_user.dart';
 import 'package:line/widgets/frequent_toasts.dart';
 import 'package:line/widgets/profile_picture.dart';
 
@@ -94,6 +96,7 @@ class _MyWidgetState extends State<SignupPage> {
 
   @override
   Widget build(BuildContext context) {
+    UserDataController userDataController = Get.put(UserDataController());
     return SafeArea(
       child: Scaffold(
         appBar: AppBar(title: Text("Signup")),
@@ -189,6 +192,12 @@ class _MyWidgetState extends State<SignupPage> {
                               _email.text,
                               _password.text,
                             );
+                            AppUser user = AppUser(
+                              email: _email.text,
+                              name: _name.text,
+                            );
+                            await userDataController.add(user);
+
                             Fluttertoast.showToast(msg: v.toString());
                             // await User.signup(
                             //   _name.text.trim(),

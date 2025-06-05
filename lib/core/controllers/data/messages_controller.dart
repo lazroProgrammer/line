@@ -36,7 +36,7 @@ class MessagesController extends GetxController {
     final content = m.Message.getContent(text);
     m.Message msg = m.Message(
       content: content,
-      createdAt: Timestamp.now(),
+      createdAt: now,
       inboxRef: inbox.value,
       isArchived: false,
       isEdited: false,
