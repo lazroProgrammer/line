@@ -15,85 +15,68 @@ class FriendsRequestPage extends StatelessWidget {
     final SentFriendRequestsController sentRequestsController = Get.put(
       SentFriendRequestsController(),
     );
-    return SafeArea(
-      child: Scaffold(
-        appBar: AppBar(title: Text("friend requests")),
-        body: Padding(
-          padding: const EdgeInsets.symmetric(horizontal: 12.0, vertical: 8),
-          child: Obx(() {
-            final receivedRequests =
-                receivedRequestsController.friendRequests.value;
-            return (receivedRequests.isEmpty)
-                ? Center(
-                  child: Text(
-                    "You have no friends requests at the moment",
-                    style: TextStyle(fontSize: 22, fontWeight: FontWeight.w600),
-                  ),
-                )
-                : Column(
-                  children: [
-                    SizedBox(height: 8),
-                    Text("sent requests", style: TextStyle(fontSize: 24)),
-                    SizedBox(
-                      height: MediaQuery.of(context).size.height / 2,
-                      child: Obx(
-                        () => ListView.builder(
-                          itemCount:
-                              sentRequestsController
-                                  .friendRequests
-                                  .value
-                                  .length,
-                          itemBuilder:
-                              (context, index) => FriendsRequestsWidget(
-                                friendRequest:
-                                    sentRequestsController
-                                        .friendRequests
-                                        .value[index],
-                                user:
-                                    sentRequestsController
-                                        .users
-                                        .value[sentRequestsController
-                                        .friendRequests
-                                        .value[index]
-                                        .receiver
-                                        .id]!,
-                              ),
-                        ),
-                      ),
-                    ),
-                    SizedBox(height: 8),
-                    Text("received requests", style: TextStyle(fontSize: 24)),
-                    SizedBox(
-                      height: MediaQuery.of(context).size.height / 2,
-                      child: Obx(
-                        () => ListView.builder(
-                          itemCount:
-                              receivedRequestsController
-                                  .friendRequests
-                                  .value
-                                  .length,
-                          itemBuilder:
-                              (context, index) => FriendsRequestsWidget(
-                                friendRequest:
-                                    receivedRequestsController
-                                        .friendRequests
-                                        .value[index],
 
-                                user:
-                                    receivedRequestsController
-                                        .users
-                                        .value[receivedRequestsController
-                                        .friendRequests
-                                        .value[index]
-                                        .sender
-                                        .id]!,
-                              ),
-                        ),
-                      ),
-                    ),
-                  ],
+    return DefaultTabController(
+      length: 2,
+      child: SafeArea(
+        child: Scaffold(
+          appBar: AppBar(
+            title: const Text("Friend Requests"),
+            bottom: const TabBar(
+              tabs: [Tab(text: "Sent"), Tab(text: "Received")],
+            ),
+          ),
+          body: TabBarView(
+            children: [
+              // Sent Requests
+              Obx(() {
+                final sent = sentRequestsController.friendRequests.value;
+                if (sent.isEmpty) {
+                  return const Center(child: Text("No sent requests."));
+                }
+                return ListView.builder(
+                  padding: const EdgeInsets.all(12),
+                  itemCount: sent.length,
+                  itemBuilder: (context, index) {
+                    final request = sent[index];
+                    final user =
+                        sentRequestsController.users.value[request.receiver.id];
+                    if (user == null)
+                      return const SizedBox.shrink(); // avoid null
+                    return FriendsRequestsWidget(
+                      friendRequest: request,
+                      user: user,
+                    );
+                  },
                 );
-          }),
+              }),
+
+              // Received Requests
+              Obx(() {
+                final received =
+                    receivedRequestsController.friendRequests.value;
+                if (received.isEmpty) {
+                  return const Center(child: Text("No received requests."));
+                }
+                return ListView.builder(
+                  padding: const EdgeInsets.all(12),
+                  itemCount: received.length,
+                  itemBuilder: (context, index) {
+                    final request = received[index];
+                    final user =
+                        receivedRequestsController.users.value[request
+                            .sender
+                            .id];
+                    if (user == null) return const SizedBox.shrink();
+                    return FriendsRequestsWidget(
+                      friendRequest: request,
+                      user: user,
+                    );
+                  },
+                );
+              }),
+            ],
+          ),
         ),
       ),
     );

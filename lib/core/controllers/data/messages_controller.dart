@@ -4,18 +4,19 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:get/get.dart';
 import 'package:line/core/apis/app/settings.dart';
 import 'package:line/core/database/firestore/daos/message_dao.dart';
+import 'package:line/core/database/firestore/data/inbox.dart';
 import 'package:line/core/database/firestore/data/message.dart' as m;
 
 //TODO: add archiving, editing later..
 class MessagesController extends GetxController {
   late Rx<List<m.Message>> messages;
-  late Rx<DocumentReference<Object?>> inbox;
+  late Rx<Inbox> inbox;
   late Rx<DocumentSnapshot<Object?>?> lastDoc;
   StreamSubscription<List<m.Message>>? _subscription;
 
   final MessageDao dao = MessageDao(firestore: FirebaseFirestore.instance);
 
-  MessagesController(DocumentReference inboxP) {
+  MessagesController(Inbox inboxP) {
     inbox = inboxP.obs;
     lastDoc = Rx<DocumentSnapshot<Object?>?>(null);
     messages = Rx<List<m.Message>>([]);
@@ -23,7 +24,7 @@ class MessagesController extends GetxController {
 
   Future<void> fetchMessages(String userID) async {
     final (msgs, last) = await dao.getByInbox(
-      inbox.value,
+      inbox.value.getRef(),
       lastVisibleMessage: lastDoc.value,
     );
     messages.value.addAll(msgs);
@@ -37,11 +38,14 @@ class MessagesController extends GetxController {
     m.Message msg = m.Message(
       content: content,
       createdAt: now,
-      inboxRef: inbox.value,
+      inboxRef: inbox.value.getRef(),
       isArchived: false,
       isEdited: false,
       lastUpdate: now,
       sender: userRef,
+      receiver: inbox.value.userIDs.firstWhere(
+        (element) => userRef.id != element.id,
+      ),
     );
     try {
       await dao.add(msg, id: msg.id);

@@ -8,6 +8,7 @@ Logger log = Logger();
 
 class Message extends DataObj {
   static String collectionPath = "messages";
+  @override
   final String id;
   final Map<String, dynamic> content;
   final Timestamp createdAt;
@@ -16,6 +17,7 @@ class Message extends DataObj {
   final bool isEdited;
   final Timestamp lastUpdate;
   final DocumentReference sender;
+  final DocumentReference receiver;
 
   Message({
     this.id = "",
@@ -26,6 +28,7 @@ class Message extends DataObj {
     required this.isEdited,
     required this.lastUpdate,
     required this.sender,
+    required this.receiver,
   });
 
   factory Message.fromJson(Map<String, dynamic> json, String id) {
@@ -39,6 +42,7 @@ class Message extends DataObj {
         isEdited: json['isEdited'] as bool? ?? false,
         lastUpdate: json['lastUpdate'] as Timestamp? ?? Timestamp.now(),
         sender: json['sender'] as DocumentReference,
+        receiver: json['receiver'] as DocumentReference,
       );
     } catch (e) {
       log.e("Exception: $e");
@@ -56,6 +60,7 @@ class Message extends DataObj {
       'isEdited': isEdited,
       'lastUpdate': lastUpdate,
       'sender': sender,
+      'receiver': receiver,
     };
   }
 

@@ -33,8 +33,9 @@ class _SearchWidgetState extends State<SearchWidget> {
     } else {
       await _searchController.searchByName(input);
     }
-
-    FocusScope.of(context).unfocus();
+    if (mounted) {
+      FocusScope.of(context).unfocus();
+    }
   }
 
   @override

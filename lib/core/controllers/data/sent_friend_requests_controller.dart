@@ -13,14 +13,13 @@ class SentFriendRequestsController extends UsersRefController {
   );
   SentFriendRequestsController() {
     friendRequests = Rx([]);
-    getSentRequests().then((_) {});
   }
 
   Future<void> getSentRequests() async {
     List<FriendRequest> requests = await dao.getBySender(
       SettingsData().getUser().getRef(),
     );
-    friendRequests.value.addAll(requests);
+    friendRequests.value.assignAll(requests);
     await getUsers(
       FriendRequest.getUsers(friendRequests.value, isSender: false),
     );

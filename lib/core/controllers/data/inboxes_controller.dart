@@ -15,14 +15,18 @@ class InboxesController extends UsersRefController {
     inboxes = Rx([]);
     isLoaded = false.obs;
     lastDoc = Rx(null);
-    getInboxes().then((_) {});
   }
 
   Future<void> getInboxes() async {
     isLoaded.value = false;
-    final (a, b) = await dao.getByUser(SettingsData().getUser().id);
+    final (a, b) = await dao.getByUser(
+      SettingsData().getUser().id,
+      lastVisibleMessage: lastDoc.value,
+    );
 
-    inboxes.value = a;
+    lastDoc.value == null
+        ? inboxes.value.assignAll(a)
+        : inboxes.value.addAll(a);
     lastDoc.value = b;
     await getUsers(_getInboxSecondUser());
     isLoaded.value = true;

@@ -1,13 +1,13 @@
-import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:line/core/apis/app/settings.dart';
 import 'package:line/core/controllers/data/messages_controller.dart';
+import 'package:line/core/database/firestore/data/inbox.dart';
 
 class ChatWidget extends StatelessWidget {
   ChatWidget({super.key, required this.inbox});
 
-  final DocumentReference inbox;
+  final Inbox inbox;
   final TextEditingController _controller = TextEditingController();
 
   @override

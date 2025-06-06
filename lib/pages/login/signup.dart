@@ -188,23 +188,20 @@ class _MyWidgetState extends State<SignupPage> {
                           connection,
                         ) async {
                           if (connection) {
-                            final v = await signUpWithEmail(
-                              _email.text,
-                              _password.text,
-                            );
-                            AppUser user = AppUser(
-                              email: _email.text,
-                              name: _name.text,
-                            );
-                            await userDataController.add(user);
-
-                            Fluttertoast.showToast(msg: v.toString());
-                            // await User.signup(
-                            //   _name.text.trim(),
-                            //   _email.text.trim(),
-                            //   _password.text,
-                            //   _phone.text,
-                            // );
+                            signUpWithEmail(_email.text, _password.text).then((
+                              v,
+                            ) {
+                              AppUser user = AppUser(
+                                id: v.user!.uid,
+                                email: _email.text,
+                                name: _name.text,
+                              );
+                              userDataController.add(user).then((_) {
+                                Fluttertoast.showToast(
+                                  msg: "successful signup",
+                                );
+                              });
+                            });
                           } else {
                             checkConnectionMsg();
                           }
