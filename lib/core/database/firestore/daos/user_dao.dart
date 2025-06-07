@@ -18,7 +18,9 @@ class UserDao extends FirestoreCRUD<AppUser> {
             .limit(1)
             .get();
 
-    return querySnapshot.docs.map((doc) => fromJson(doc.data(), doc.id)).first;
+    return querySnapshot.docs
+        .map((doc) => AppUser.fromJson(doc.data(), doc.id))
+        .first;
   }
 
   Future<List<AppUser>> getByName(

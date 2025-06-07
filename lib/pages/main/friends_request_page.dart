@@ -9,11 +9,10 @@ class FriendsRequestPage extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final ReceivedFriendRequestsController receivedRequestsController = Get.put(
-      ReceivedFriendRequestsController(),
-    );
-    final SentFriendRequestsController sentRequestsController = Get.put(
-      SentFriendRequestsController(),
+    final ReceivedFriendRequestsController receivedRequestsController =
+        Get.find(tag: "receivedRequests");
+    final SentFriendRequestsController sentRequestsController = Get.find(
+      tag: "sentRequests",
     );
 
     return DefaultTabController(
@@ -30,7 +29,7 @@ class FriendsRequestPage extends StatelessWidget {
             children: [
               // Sent Requests
               Obx(() {
-                final sent = sentRequestsController.friendRequests.value;
+                final sent = sentRequestsController.friendRequests;
                 if (sent.isEmpty) {
                   return const Center(child: Text("No sent requests."));
                 }
@@ -40,12 +39,14 @@ class FriendsRequestPage extends StatelessWidget {
                   itemBuilder: (context, index) {
                     final request = sent[index];
                     final user =
-                        sentRequestsController.users.value[request.receiver.id];
-                    if (user == null)
+                        sentRequestsController.users.value[request.receiver];
+                    if (user == null) {
                       return const SizedBox.shrink(); // avoid null
+                    }
                     return FriendsRequestsWidget(
                       friendRequest: request,
                       user: user,
+                      isReceived: false,
                     );
                   },
                 );
@@ -53,8 +54,7 @@ class FriendsRequestPage extends StatelessWidget {
 
               // Received Requests
               Obx(() {
-                final received =
-                    receivedRequestsController.friendRequests.value;
+                final received = receivedRequestsController.friendRequests;
                 if (received.isEmpty) {
                   return const Center(child: Text("No received requests."));
                 }
@@ -64,13 +64,12 @@ class FriendsRequestPage extends StatelessWidget {
                   itemBuilder: (context, index) {
                     final request = received[index];
                     final user =
-                        receivedRequestsController.users.value[request
-                            .sender
-                            .id];
+                        receivedRequestsController.users.value[request.sender];
                     if (user == null) return const SizedBox.shrink();
                     return FriendsRequestsWidget(
                       friendRequest: request,
                       user: user,
+                      isReceived: true,
                     );
                   },
                 );

@@ -7,12 +7,12 @@ import 'package:line/core/database/firestore/data/app_user.dart' as u;
 import 'package:line/core/database/firestore/data/inbox.dart';
 
 class InboxesController extends UsersRefController {
-  late Rx<List<Inbox>> inboxes;
+  late RxList<Inbox> inboxes;
   late Rx<DocumentSnapshot<Object?>?> lastDoc;
   late RxBool isLoaded;
   InboxDao dao = InboxDao(firestore: FirebaseFirestore.instance);
   InboxesController() {
-    inboxes = Rx([]);
+    inboxes = RxList();
     isLoaded = false.obs;
     lastDoc = Rx(null);
   }
@@ -23,25 +23,35 @@ class InboxesController extends UsersRefController {
       SettingsData().getUser().id,
       lastVisibleMessage: lastDoc.value,
     );
-
-    lastDoc.value == null
-        ? inboxes.value.assignAll(a)
-        : inboxes.value.addAll(a);
+    print("'a' length: ${a.length}");
+    if (lastDoc.value == null) {
+      inboxes.clear();
+      inboxes.addAll(a);
+    } else {
+      inboxes.addAll(a);
+    }
     lastDoc.value = b;
-    await getUsers(_getInboxSecondUser());
+    await getUsers(getInboxSecondUser());
     isLoaded.value = true;
   }
 
   Future<void> add(u.AppUser user) async {
+    final now = Timestamp.now();
     final inbox = Inbox(
-      lastUpdated: Timestamp.now(),
-      userIDs: [SettingsData().getUser().getRef(), user.getRef()],
+      lastUpdated: now,
+      userIDs: [SettingsData().getUser().id, user.id],
       lastMessage: "",
     );
     try {
-      await dao.add(inbox, id: inbox.id);
-      inboxes.value.add(inbox);
-      await getUsers(_getInboxSecondUser());
+      final id = await dao.add(inbox);
+      final newInbox = Inbox(
+        id: id,
+        lastUpdated: now,
+        userIDs: [SettingsData().getUser().id, user.id],
+        lastMessage: "",
+      );
+      inboxes.add(newInbox);
+      await getUsers(getInboxSecondUser());
     } catch (e) {
       log.e("Error at updating status:$e");
     }
@@ -50,18 +60,18 @@ class InboxesController extends UsersRefController {
   Future<void> deleteByID(String id) async {
     try {
       await dao.delete(id);
-      inboxes.value.removeWhere((r) => r.id == id);
+      inboxes.removeWhere((r) => r.id == id);
       //TODO: remove user when inboxes inbox is deleted
     } catch (e) {}
   }
 
   //? this assumes that there are no group chat and assumes that there are strictly 2 users
-  List<String> _getInboxSecondUser() {
-    return inboxes.value.map((e) {
+  List<String> getInboxSecondUser() {
+    return inboxes.map((e) {
       final a = e.userIDs.firstWhere(
-        (element) => element.id != SettingsData().getUser().id,
+        (element) => element != SettingsData().getUser().id,
       );
-      return a.id;
+      return a;
     }).toList();
   }
 }

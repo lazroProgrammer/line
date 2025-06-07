@@ -8,6 +8,7 @@ import 'package:line/core/controllers/UI/toggle_controller.dart';
 import 'package:line/core/controllers/data/inboxes_controller.dart';
 import 'package:line/core/controllers/data/received_friend_requests_controller.dart';
 import 'package:line/core/controllers/data/sent_friend_requests_controller.dart';
+import 'package:line/core/controllers/data/user_data_controller.dart';
 import 'package:line/core/controllers/settings/darkmode_controller.dart';
 import 'package:line/root.dart';
 import 'package:line/theme/app_theme.dart';
@@ -18,7 +19,7 @@ void main() async {
   WidgetsFlutterBinding.ensureInitialized();
   await Firebase.initializeApp(options: DefaultFirebaseOptions.currentPlatform);
   await SettingsData.init();
-  await _initControllers();
+  _initControllers();
   // await FirebaseAuth.instance.useAuthEmulator('localhost', 9099);
   runApp(const MainApp());
 }
@@ -43,13 +44,20 @@ class MainApp extends StatelessWidget {
   }
 }
 
-Future<void> _initControllers() async {
-  final InboxesController inboxesController = Get.put(InboxesController());
-  final SentFriendRequestsController sentRequestsController = Get.put(
-    SentFriendRequestsController(),
+void _initControllers() {
+  Get.put(InboxesController(), tag: "inboxes");
+  Get.put(SentFriendRequestsController(), tag: "sentRequests");
+  Get.put(ReceivedFriendRequestsController(), tag: "receivedRequests");
+  Get.put(UserDataController(), tag: "user");
+}
+
+Future<void> getData() async {
+  final InboxesController inboxesController = Get.find(tag: "inboxes");
+  final SentFriendRequestsController sentRequestsController = Get.find(
+    tag: "sentRequests",
   );
-  final ReceivedFriendRequestsController receivedRequestsController = Get.put(
-    ReceivedFriendRequestsController(),
+  final ReceivedFriendRequestsController receivedRequestsController = Get.find(
+    tag: "receivedRequests",
   );
 
   await Future.wait([

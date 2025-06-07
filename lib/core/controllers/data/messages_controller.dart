@@ -9,7 +9,7 @@ import 'package:line/core/database/firestore/data/message.dart' as m;
 
 //TODO: add archiving, editing later..
 class MessagesController extends GetxController {
-  late Rx<List<m.Message>> messages;
+  late RxList<m.Message> messages;
   late Rx<Inbox> inbox;
   late Rx<DocumentSnapshot<Object?>?> lastDoc;
   StreamSubscription<List<m.Message>>? _subscription;
@@ -19,7 +19,7 @@ class MessagesController extends GetxController {
   MessagesController(Inbox inboxP) {
     inbox = inboxP.obs;
     lastDoc = Rx<DocumentSnapshot<Object?>?>(null);
-    messages = Rx<List<m.Message>>([]);
+    messages = RxList([]);
   }
 
   Future<void> fetchMessages(String userID) async {
@@ -27,13 +27,13 @@ class MessagesController extends GetxController {
       inbox.value.getRef(),
       lastVisibleMessage: lastDoc.value,
     );
-    messages.value.addAll(msgs);
+    messages.addAll(msgs);
     lastDoc.value = last;
   }
 
   Future<void> add(String text) async {
     Timestamp now = Timestamp.now();
-    final userRef = SettingsData().getUser().getRef();
+    final userRef = SettingsData().getUser().id;
     final content = m.Message.getContent(text);
     m.Message msg = m.Message(
       content: content,
@@ -43,13 +43,11 @@ class MessagesController extends GetxController {
       isEdited: false,
       lastUpdate: now,
       sender: userRef,
-      receiver: inbox.value.userIDs.firstWhere(
-        (element) => userRef.id != element.id,
-      ),
+      receiver: inbox.value.userIDs.firstWhere((element) => userRef != element),
     );
     try {
       await dao.add(msg, id: msg.id);
-      messages.value.add(msg);
+      messages.add(msg);
       throw UnimplementedError();
     } catch (e) {
       m.log.e("Error at updating status:$e");
@@ -59,7 +57,7 @@ class MessagesController extends GetxController {
   Future<void> deleteByID(String id) async {
     try {
       await dao.delete(id);
-      messages.value.removeWhere((r) => r.id == id);
+      messages.removeWhere((r) => r.id == id);
     } catch (e) {}
   }
 
@@ -68,7 +66,7 @@ class MessagesController extends GetxController {
     _subscription = dao.listenToMessagesOfInbox(inbox, latestTimestamp).listen((
       newMsgs,
     ) {
-      messages.value.addAll(newMsgs);
+      messages.addAll(newMsgs);
     });
   }
 

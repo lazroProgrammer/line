@@ -7,37 +7,42 @@ import 'package:line/core/database/firestore/data/app_user.dart' as u;
 import 'package:line/core/database/firestore/data/friend_request.dart';
 
 class SentFriendRequestsController extends UsersRefController {
-  late Rx<List<FriendRequest>> friendRequests;
+  late RxList<FriendRequest> friendRequests;
   FriendRequestDao dao = FriendRequestDao(
     firestore: FirebaseFirestore.instance,
   );
   SentFriendRequestsController() {
-    friendRequests = Rx([]);
+    friendRequests = RxList();
   }
 
   Future<void> getSentRequests() async {
+    print(SettingsData().getUser().id);
+
     List<FriendRequest> requests = await dao.getBySender(
-      SettingsData().getUser().getRef(),
+      SettingsData().getUser().id,
     );
-    friendRequests.value.assignAll(requests);
-    await getUsers(
-      FriendRequest.getUsers(friendRequests.value, isSender: false),
-    );
+    friendRequests.assignAll(requests);
+    await getUsers(FriendRequest.getUsers(friendRequests, isSender: false));
   }
 
   Future<void> add(u.AppUser user) async {
     final request = FriendRequest(
       createdAt: Timestamp.fromDate(DateTime.timestamp()),
-      sender: SettingsData().getUser().getRef(),
-      receiver: user.getRef(),
+      sender: SettingsData().getUser().id,
+      receiver: user.id,
       status: "pending",
     );
     try {
-      await dao.add(request);
-      friendRequests.value.add(request);
-      await getUsers(
-        FriendRequest.getUsers(friendRequests.value, isSender: false),
+      String id = await dao.add(request);
+      final newRequest = FriendRequest(
+        id: id,
+        createdAt: Timestamp.fromDate(DateTime.timestamp()),
+        sender: SettingsData().getUser().id,
+        receiver: user.id,
+        status: "pending",
       );
+      friendRequests.add(newRequest);
+      await getUsers(FriendRequest.getUsers(friendRequests, isSender: false));
     } catch (e) {
       log.e("Error at updating status:$e");
     }
@@ -46,8 +51,11 @@ class SentFriendRequestsController extends UsersRefController {
   Future<void> deleteByID(String id) async {
     try {
       await dao.delete(id);
-      friendRequests.value.removeWhere((r) => r.id == id);
-      //TODO: remove user when friend request is deleted
-    } catch (e) {}
+      friendRequests.removeWhere((r) => r.id == id);
+      print(friendRequests.length);
+      await getUsers(FriendRequest.getUsers(friendRequests, isSender: false));
+    } catch (e) {
+      log.e("exception $e");
+    }
   }
 }

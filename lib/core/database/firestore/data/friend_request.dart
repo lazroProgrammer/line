@@ -9,8 +9,8 @@ class FriendRequest extends DataObj {
 
   final String id;
   final Timestamp createdAt;
-  final DocumentReference sender;
-  final DocumentReference receiver;
+  final String sender;
+  final String receiver;
   final String status;
 
   FriendRequest({
@@ -25,9 +25,9 @@ class FriendRequest extends DataObj {
     try {
       return FriendRequest(
         id: id,
-        createdAt: json['created_at'] as Timestamp? ?? Timestamp.now(),
-        sender: json['sender'] as DocumentReference,
-        receiver: json['receiver'] as DocumentReference,
+        createdAt: json['createdAt'] as Timestamp,
+        sender: json['sender'] as String,
+        receiver: json['receiver'] as String,
         status: json['status'] as String,
       );
     } catch (e) {
@@ -51,7 +51,7 @@ class FriendRequest extends DataObj {
   }) {
     List<String> e = [];
     for (var element in friendRequests) {
-      e.add(isSender ? element.sender.id : element.receiver.id);
+      e.add(isSender ? element.sender : element.receiver);
     }
     return e;
   }

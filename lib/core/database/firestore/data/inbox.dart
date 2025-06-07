@@ -10,7 +10,7 @@ class Inbox extends DataObj {
   final String id; // Firestore document ID
   final String lastMessage;
   final Timestamp lastUpdated;
-  final List<DocumentReference> userIDs;
+  final List<String> userIDs;
 
   Inbox({
     this.id = "",
@@ -24,12 +24,8 @@ class Inbox extends DataObj {
       return Inbox(
         id: id,
         lastMessage: json['lastMessage'] as String? ?? '',
-        lastUpdated: json['lastUpdated'] as Timestamp? ?? Timestamp.now(),
-        userIDs:
-            (json['userIDs'] as List?)
-                ?.whereType<DocumentReference>()
-                .toList() ??
-            [],
+        lastUpdated: json['lastUpdated'] as Timestamp,
+        userIDs: (json['userIDs'] as List?)?.whereType<String>().toList() ?? [],
       );
     } catch (e) {
       log.e("Exception: $e");

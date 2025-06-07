@@ -10,7 +10,7 @@ class AppUser extends DataObj {
   final String email;
   final String name;
 
-  AppUser({this.id = "", required this.email, required this.name});
+  AppUser({required this.id, required this.email, required this.name});
 
   factory AppUser.fromJson(Map<String, dynamic> json, String id) {
     try {

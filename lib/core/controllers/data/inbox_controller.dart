@@ -7,7 +7,7 @@ import 'package:line/core/database/firestore/data/inbox.dart';
 
 //TODO: add archiving, editing later..
 class MessagesController extends GetxController {
-  late Rx<List<Inbox>> messages;
+  late RxList<Inbox> messages;
   late Rx<DocumentReference<Object?>> inbox;
   late Rx<DocumentSnapshot<Object?>?> lastDoc;
 
@@ -16,7 +16,7 @@ class MessagesController extends GetxController {
   MessagesController(DocumentReference inboxP) {
     inbox = inboxP.obs;
     lastDoc = Rx<DocumentSnapshot<Object?>?>(null);
-    messages = Rx<List<Inbox>>([]);
+    messages = RxList([]);
   }
 
   Future<void> fetchInboxes(String userID) async {
@@ -24,11 +24,11 @@ class MessagesController extends GetxController {
       userID,
       lastVisibleMessage: lastDoc.value,
     );
-    messages.value.addAll(msgs);
+    messages.addAll(msgs);
     lastDoc.value = last;
   }
 
-  Future<void> add(DocumentReference user1, DocumentReference user2) async {
+  Future<void> add(String user1, String user2) async {
     Timestamp now = Timestamp.now();
     Inbox inbox = Inbox(
       lastMessage: "",
@@ -37,6 +37,7 @@ class MessagesController extends GetxController {
     );
     try {
       String id = await dao.add(inbox);
+      //? after adding to server
       final newInbox = Inbox(
         id: id,
         lastMessage: "",
@@ -44,7 +45,7 @@ class MessagesController extends GetxController {
         userIDs: [user1, user2],
       );
 
-      messages.value.add(inbox);
+      messages.add(newInbox);
       throw UnimplementedError();
     } catch (e) {
       log.e("Error at updating status:$e");
@@ -54,7 +55,7 @@ class MessagesController extends GetxController {
   Future<void> deleteByID(String id) async {
     try {
       await dao.delete(id);
-      messages.value.removeWhere((r) => r.id == id);
+      messages.removeWhere((r) => r.id == id);
     } catch (e) {}
   }
 }

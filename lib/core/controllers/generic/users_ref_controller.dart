@@ -12,6 +12,7 @@ class UsersRefController extends GetxController {
   }
 
   Future<void> getUsers(List<String> allIDs) async {
+    users.value.removeWhere((id, e) => !allIDs.contains(id));
     if (allIDs.isEmpty) return;
     final idsToFetch =
         allIDs.where((id) => !users.value.containsKey(id)).toList();

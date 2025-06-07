@@ -23,7 +23,7 @@ class Friend extends DataObj {
     try {
       return Friend(
         id: id,
-        createdAt: json['created_at'] as Timestamp? ?? Timestamp.now(),
+        createdAt: json['createdAt'] as Timestamp,
         sender: json['sender'] as DocumentReference,
         receiver: json['receiver'] as DocumentReference,
       );

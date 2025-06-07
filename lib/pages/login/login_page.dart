@@ -5,6 +5,7 @@ import 'package:line/core/apis/app/connectivity.dart';
 import 'package:line/core/apis/firebase/auth.dart';
 import 'package:line/core/controllers/UI/toggle_controller.dart';
 import 'package:line/core/controllers/data/user_data_controller.dart';
+import 'package:line/main.dart';
 import 'package:line/pages/login/signup.dart';
 import 'package:line/pages/main/main_page.dart';
 import 'package:line/widgets/frequent_toasts.dart';
@@ -93,13 +94,13 @@ class LoginPage extends StatelessWidget {
                                 signInWithEmail(
                                   _email.text.trim(),
                                   _password.text.trim(),
-                                ).then((value) async {
-                                  await userDataController.login(_email.text);
-                                  Navigator.of(context).pushReplacement(
-                                    MaterialPageRoute(
-                                      builder: (context) => Mainpage(),
-                                    ),
-                                  );
+                                ).then((value) {
+                                  userDataController.login(_email.text).then((
+                                    _,
+                                  ) async {
+                                    await getData();
+                                  });
+                                  Get.offAll(Mainpage());
                                 });
                               } catch (e) {
                                 print(e);

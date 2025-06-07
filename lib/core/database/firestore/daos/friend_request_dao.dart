@@ -11,7 +11,7 @@ class FriendRequestDao extends FirestoreCRUD<FriendRequest> {
       );
 
   Future<List<FriendRequest>> getBySender(
-    DocumentReference sender, {
+    String sender, {
     DocumentSnapshot? lastVisibleMessage,
   }) async {
     final query = firestore
@@ -30,12 +30,13 @@ class FriendRequestDao extends FirestoreCRUD<FriendRequest> {
   }
 
   Future<List<FriendRequest>> getByReceiver(
-    DocumentReference receiver, {
+    String receiver, {
     DocumentSnapshot? lastVisibleMessage,
   }) async {
     final query = firestore
         .collection(collectionPath)
         .where('receiver', isEqualTo: receiver)
+        .where('status', isNotEqualTo: "accepted")
         .limit(5);
 
     final querySnapshot =

@@ -9,16 +9,16 @@ class AppUser {
 
 // Your controller, simplified just for this test
 class UsersRefController {
-  late Rx<List<AppUser>> users;
+  late RxList<AppUser> users;
 
   UsersRefController() {
-    users = Rx([]);
+    users = RxList();
   }
 
   // We'll expose this part for testing
   List<String> getMissingUserIds(List<String> allIDs) {
     final allIds = allIDs;
-    final fetchedIds = users.value.map((e) => e.id).toList();
+    final fetchedIds = users.map((e) => e.id).toList();
     final ids = allIds.where((id) => !fetchedIds.contains(id)).toList();
     return ids;
   }

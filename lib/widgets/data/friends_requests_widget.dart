@@ -1,15 +1,23 @@
 import 'package:flutter/material.dart';
+import 'package:get/get.dart';
+import 'package:line/core/controllers/data/inboxes_controller.dart';
+import 'package:line/core/controllers/data/received_friend_requests_controller.dart';
+import 'package:line/core/controllers/data/sent_friend_requests_controller.dart';
 import 'package:line/core/database/firestore/data/app_user.dart';
 import 'package:line/core/database/firestore/data/friend_request.dart';
+import 'package:line/widgets/formatted_time.dart';
 
+//TODO: make sure that if inbox fails to build, the application does it from the receiver side
 class FriendsRequestsWidget extends StatelessWidget {
   final FriendRequest friendRequest;
   final AppUser user;
+  final bool isReceived;
 
   FriendsRequestsWidget({
     super.key,
     required this.friendRequest,
     required this.user,
+    required this.isReceived,
   });
   final List<Color> _avatarColors = [
     Colors.redAccent,
@@ -41,6 +49,12 @@ class FriendsRequestsWidget extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final SentFriendRequestsController sentFriendRequestsController = Get.find(
+      tag: "sentRequests",
+    );
+    final ReceivedFriendRequestsController receivedFriendRequestsController =
+        Get.find(tag: "receivedRequests");
+    final InboxesController inboxController = Get.find(tag: "inboxes");
     return InkWell(
       onTap: () {
         // navigateWithFade(ChatPage());
@@ -90,9 +104,40 @@ class FriendsRequestsWidget extends StatelessWidget {
                 crossAxisAlignment: CrossAxisAlignment.end,
                 children: [
                   Text(
-                    friendRequest.createdAt.toDate().toIso8601String(),
+                    formatedTime(
+                      "dd/MM/yyyy HH:mm",
+                      friendRequest.createdAt.toDate(),
+                    ),
                     style: const TextStyle(color: Colors.grey, fontSize: 12),
                   ),
+                  (isReceived)
+                      ? Row(
+                        children: [
+                          IconButton(
+                            onPressed: () async {
+                              await receivedFriendRequestsController
+                                  .updateStatus(friendRequest.id, false);
+                            },
+                            icon: Icon(Icons.cancel_outlined),
+                          ),
+                          IconButton(
+                            onPressed: () async {
+                              await receivedFriendRequestsController
+                                  .updateStatus(friendRequest.id, true);
+                              await inboxController.add(user);
+                            },
+                            icon: Icon(Icons.check),
+                          ),
+                        ],
+                      )
+                      : IconButton(
+                        onPressed: () async {
+                          await sentFriendRequestsController.deleteByID(
+                            friendRequest.id,
+                          );
+                        },
+                        icon: Icon(Icons.cancel_outlined),
+                      ),
                 ],
               ),
             ),

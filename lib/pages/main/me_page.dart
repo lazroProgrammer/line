@@ -18,10 +18,7 @@ class MePage extends StatelessWidget {
   Widget build(BuildContext context) {
     // final usr = ref.watch(userNotifier);
     final ToggleController darkmode = Get.find(tag: "dark");
-    UserDataController userController = Get.put(
-      UserDataController(),
-      tag: "user",
-    );
+    UserDataController userController = Get.find(tag: "user");
 
     return Column(
       children: [

@@ -6,28 +6,27 @@ import 'package:line/core/database/firestore/daos/friend_request_dao.dart';
 import 'package:line/core/database/firestore/data/friend_request.dart';
 
 class ReceivedFriendRequestsController extends UsersRefController {
-  late Rx<List<FriendRequest>> friendRequests;
+  late RxList<FriendRequest> friendRequests;
   FriendRequestDao dao = FriendRequestDao(
     firestore: FirebaseFirestore.instance,
   );
   ReceivedFriendRequestsController() {
-    friendRequests = Rx([]);
+    friendRequests = RxList([]);
   }
 
   Future<void> getReceivedRequests() async {
+    print(SettingsData().getUser().id);
     List<FriendRequest> requests = await dao.getByReceiver(
-      SettingsData().getUser().getRef(),
+      SettingsData().getUser().id,
     );
-    friendRequests.value.assignAll(requests);
-    await getUsers(
-      FriendRequest.getUsers(friendRequests.value, isSender: true),
-    );
+    friendRequests.assignAll(requests);
+    await getUsers(FriendRequest.getUsers(friendRequests, isSender: true));
   }
 
   Future<void> updateStatus(String id, bool isAccepted) async {
     try {
       await dao.update(id, {"status": isAccepted ? "accepted" : "rejected"});
-      for (var element in friendRequests.value) {
+      for (var element in friendRequests) {
         if (element.id == id) {
           FriendRequest n = FriendRequest(
             createdAt: element.createdAt,

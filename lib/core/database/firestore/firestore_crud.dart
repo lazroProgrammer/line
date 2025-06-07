@@ -24,12 +24,7 @@ class FirestoreCRUD<T extends DataObj> {
   }
 
   Future<String> add(T item, {String? id}) async {
-    final docRef =
-        id != null
-            ? collection.doc(id)
-            : item.id != ""
-            ? collection.doc(item.id)
-            : collection.doc();
+    final docRef = id != null ? collection.doc(id) : collection.doc();
 
     await docRef.set(toJson(item));
     return docRef.id;

@@ -8,7 +8,6 @@ Logger log = Logger();
 
 class Message extends DataObj {
   static String collectionPath = "messages";
-  @override
   final String id;
   final Map<String, dynamic> content;
   final Timestamp createdAt;
@@ -16,8 +15,8 @@ class Message extends DataObj {
   final bool isArchived;
   final bool isEdited;
   final Timestamp lastUpdate;
-  final DocumentReference sender;
-  final DocumentReference receiver;
+  final String sender;
+  final String receiver;
 
   Message({
     this.id = "",
@@ -36,13 +35,13 @@ class Message extends DataObj {
       return Message(
         id: id,
         content: Map<String, dynamic>.from(json['content'] ?? {}),
-        createdAt: json['created_at'] as Timestamp? ?? Timestamp.now(),
+        createdAt: json['createdAt'] as Timestamp,
         inboxRef: json['inboxRef'] as DocumentReference,
         isArchived: json['isArchived'] as bool? ?? false,
         isEdited: json['isEdited'] as bool? ?? false,
-        lastUpdate: json['lastUpdate'] as Timestamp? ?? Timestamp.now(),
-        sender: json['sender'] as DocumentReference,
-        receiver: json['receiver'] as DocumentReference,
+        lastUpdate: json['lastUpdate'] as Timestamp,
+        sender: json['sender'] as String,
+        receiver: json['receiver'] as String,
       );
     } catch (e) {
       log.e("Exception: $e");

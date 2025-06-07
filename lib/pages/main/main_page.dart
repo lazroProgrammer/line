@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:line/core/controllers/UI/index_controller.dart';
+import 'package:line/core/controllers/data/inboxes_controller.dart';
 import 'package:line/generic_fonctions.dart';
 import 'package:line/pages/main/add_friends_page.dart';
 import 'package:line/pages/main/friends_request_page.dart';
@@ -12,6 +13,10 @@ const List<Widget> widgets = [Homepage(), MePage()];
 
 class Mainpage extends StatelessWidget {
   const Mainpage({super.key});
+  Future<void> getInboxes() async {
+    final InboxesController inboxesController = Get.find(tag: "inboxes");
+    await inboxesController.getInboxes();
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -40,12 +45,17 @@ class Mainpage extends StatelessWidget {
               ),
             ],
           ),
-          body: AnimatedSwitcher(
-            duration: const Duration(milliseconds: 300),
-            transitionBuilder: (Widget child, Animation<double> animation) {
-              return FadeTransition(opacity: animation, child: child);
+          body: RefreshIndicator(
+            onRefresh: () async {
+              await getInboxes();
             },
-            child: widgets[index],
+            child: AnimatedSwitcher(
+              duration: const Duration(milliseconds: 300),
+              transitionBuilder: (Widget child, Animation<double> animation) {
+                return FadeTransition(opacity: animation, child: child);
+              },
+              child: widgets[index],
+            ),
           ),
           bottomNavigationBar: BottomNavigationBar(
             currentIndex: index,

@@ -43,7 +43,9 @@ class UserSearchWidget extends StatelessWidget {
     // Local per-widget state
     final ObjectController<bool> isSentController = ObjectController(false);
 
-    final SentFriendRequestsController requestController = Get.find();
+    final SentFriendRequestsController requestController = Get.find(
+      tag: "sentRequests",
+    );
 
     return InkWell(
       onTap: () {
@@ -92,6 +94,8 @@ class UserSearchWidget extends StatelessWidget {
                 user.id,
               );
               final isSent = isSentController.obj.value;
+              print(alreadySent);
+              print(requestController.users.value);
 
               return IconButton(
                 onPressed:

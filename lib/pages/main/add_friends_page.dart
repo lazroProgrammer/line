@@ -30,10 +30,10 @@ class AddFriendsPage extends StatelessWidget {
                     : SizedBox(
                       height: MediaQuery.of(context).size.height * 2 / 3,
                       child: ListView.builder(
-                        itemCount: resultController.results.value.length,
+                        itemCount: resultController.results.length,
                         itemBuilder:
                             (context, index) => UserSearchWidget(
-                              user: resultController.results.value[index],
+                              user: resultController.results[index],
                             ),
                       ),
                     );

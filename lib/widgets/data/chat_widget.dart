@@ -19,13 +19,13 @@ class ChatWidget extends StatelessWidget {
       children: [
         Expanded(
           child: Obx(() {
-            final messages = messagesController.messages.value;
+            final messages = messagesController.messages;
             return ListView.builder(
               padding: const EdgeInsets.all(14.0),
               itemCount: messages.length,
               itemBuilder: (context, index) {
                 final message = messages[index];
-                final isUser = message.sender.id == SettingsData().userID;
+                final isUser = message.sender == SettingsData().userID;
                 final alignment =
                     isUser ? Alignment.centerRight : Alignment.centerLeft;
                 final color = isUser ? Colors.blueAccent : Colors.grey[300];

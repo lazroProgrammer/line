@@ -1,15 +1,16 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:get/get.dart';
+import 'package:line/core/apis/app/settings.dart';
 import 'package:line/core/database/firestore/daos/user_dao.dart';
 import 'package:line/core/database/firestore/data/app_user.dart';
 
 class UserSearchController extends GetxController {
   RxString query = ''.obs;
-  late Rx<List<AppUser>> results;
+  late RxList<AppUser> results;
   RxBool isLoading = false.obs;
   final UserDao userDao = UserDao(firestore: FirebaseFirestore.instance);
   UserSearchController() {
-    results = Rx([]);
+    results = RxList();
   }
 
   void onQueryChanged(String input) {
@@ -22,16 +23,25 @@ class UserSearchController extends GetxController {
         searchByName(query.value);
       }
     } else {
-      results.value.clear();
+      results.clear();
     }
   }
 
   Future<void> searchByName(String name) async {
     isLoading.value = true;
+    final user = SettingsData().getUser();
     try {
-      final res = await userDao.getByName(name);
-      results.value.clear();
-      results.value.addAll(res);
+      if (user.name.contains(name)) {
+        final res = await userDao.getByName(name);
+        results.clear();
+        final you = res.firstWhere((element) => user.email == element.email);
+        res.remove(you);
+        results.addAll(res);
+      } else {
+        final res = await userDao.getByName(name);
+        results.clear();
+        results.addAll(res);
+      }
     } finally {
       isLoading.value = false;
     }
@@ -39,10 +49,19 @@ class UserSearchController extends GetxController {
 
   Future<void> searchByEmail(String email) async {
     isLoading.value = true;
+    final user = SettingsData().getUser();
     try {
-      final res = await userDao.getByEmailSearch(email);
-      results.value.clear();
-      results.value.addAll(res);
+      if (user.email.contains(email)) {
+        final res = await userDao.getByEmailSearch(email);
+        results.clear();
+        final you = res.firstWhere((element) => user.email == element.email);
+        res.remove(you);
+        results.addAll(res);
+      } else {
+        final res = await userDao.getByEmailSearch(email);
+        results.clear();
+        results.addAll(res);
+      }
     } finally {
       isLoading.value = false;
     }
