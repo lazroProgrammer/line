@@ -64,7 +64,9 @@ class ChatWidget extends StatelessWidget {
               Expanded(
                 child: TextField(
                   controller: _controller,
-                  onSubmitted: (_) => _sendMessage(),
+                  onSubmitted: (_) async {
+                    await _sendMessage(messagesController);
+                  },
                   decoration: InputDecoration(
                     hintText: 'Type a message',
                     border: InputBorder.none,
@@ -73,7 +75,9 @@ class ChatWidget extends StatelessWidget {
               ),
               IconButton(
                 icon: Icon(Icons.send, color: Colors.blue),
-                onPressed: _sendMessage,
+                onPressed: () async {
+                  await _sendMessage(messagesController);
+                },
               ),
             ],
           ),
@@ -83,7 +87,11 @@ class ChatWidget extends StatelessWidget {
     );
   }
 
-  void _sendMessage() {
-    _controller.clear();
+  Future<void> _sendMessage(MessagesController mController) async {
+    final text = _controller.text;
+    if (text.trim() != "") {
+      await mController.add(text.trim());
+      _controller.clear();
+    }
   }
 }

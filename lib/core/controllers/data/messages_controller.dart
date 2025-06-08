@@ -1,6 +1,7 @@
 import 'dart:async';
 
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:get/get.dart';
 import 'package:line/core/apis/app/settings.dart';
 import 'package:line/core/database/firestore/daos/message_dao.dart';
@@ -12,7 +13,7 @@ class MessagesController extends GetxController {
   late RxList<m.Message> messages;
   late Rx<Inbox> inbox;
   late Rx<DocumentSnapshot<Object?>?> lastDoc;
-  StreamSubscription<List<m.Message>>? _subscription;
+  StreamSubscription<QuerySnapshot<Map<String, dynamic>>>? _subscription;
 
   final MessageDao dao = MessageDao(firestore: FirebaseFirestore.instance);
 
@@ -20,15 +21,22 @@ class MessagesController extends GetxController {
     inbox = inboxP.obs;
     lastDoc = Rx<DocumentSnapshot<Object?>?>(null);
     messages = RxList([]);
+    print(FirebaseAuth.instance.currentUser!.uid);
+    startListening(inboxP.getRef());
+    // fetchMessages().then((_) {
+
+    //   // startListening(lastDoc.value!.reference, messages.first.createdAt);
+    // });
   }
 
-  Future<void> fetchMessages(String userID) async {
+  Future<void> fetchMessages() async {
     final (msgs, last) = await dao.getByInbox(
       inbox.value.getRef(),
       lastVisibleMessage: lastDoc.value,
     );
-    messages.addAll(msgs);
+    messages.addAll(msgs.reversed);
     lastDoc.value = last;
+    // startListening(lastDoc.value!.reference, messages.first.createdAt);
   }
 
   Future<void> add(String text) async {
@@ -46,9 +54,8 @@ class MessagesController extends GetxController {
       receiver: inbox.value.userIDs.firstWhere((element) => userRef != element),
     );
     try {
-      await dao.add(msg, id: msg.id);
+      await dao.add(msg);
       messages.add(msg);
-      throw UnimplementedError();
     } catch (e) {
       m.log.e("Error at updating status:$e");
     }
@@ -61,13 +68,44 @@ class MessagesController extends GetxController {
     } catch (e) {}
   }
 
-  void startListening(DocumentReference inbox, Timestamp latestTimestamp) {
+  // void startListening(DocumentReference inbox, Timestamp latestTimestamp) {
+  //   _subscription?.cancel();
+  //   _subscription = dao.startMessageListener(inbox, latestTimestamp).listen((
+  //     newMsgs,
+  //   ) {
+  //     print("🎯 New messages received: ${newMsgs.length}");
+  //     messages.addAll(newMsgs.reversed);
+  //   });
+  // }
+
+  // void startListening(DocumentReference inbox, Timestamp latestTimestamp) {
+  //   _subscription?.cancel();
+  //   print("hello");
+  //   _subscription = dao.startMessageListener(
+  //     inboxRef: inbox,
+  //     latestTimestamp:
+  //         messages.isNotEmpty ? messages.last.createdAt : Timestamp(0, 0),
+  //     onNewMessages: (List<m.Message> newMsgs) {
+  //       print("📥 Got ${newMsgs.length} new messages");
+  //       messages.addAll(newMsgs.reversed);
+  //     },
+  //   );
+  // }
+  void startListening(DocumentReference inboxRef) {
     _subscription?.cancel();
-    _subscription = dao.listenToMessagesOfInbox(inbox, latestTimestamp).listen((
-      newMsgs,
-    ) {
-      messages.addAll(newMsgs);
-    });
+
+    _subscription = FirebaseFirestore.instance
+        .collection('messages')
+        .where('inboxRef', isEqualTo: inboxRef)
+        .orderBy('createdAt', descending: true)
+        .snapshots()
+        .listen((snapshot) {
+          final newMessages =
+              snapshot.docs
+                  .map((doc) => m.Message.fromJson(doc.data(), doc.id))
+                  .toList();
+          messages.assignAll(newMessages.reversed);
+        });
   }
 
   void stopListening() {

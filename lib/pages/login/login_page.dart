@@ -37,7 +37,7 @@ class LoginPage extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    UserDataController userDataController = Get.put(UserDataController());
+    UserDataController userDataController = Get.find(tag: "user");
     return SafeArea(
       child: Scaffold(
         appBar: AppBar(title: Text("Login")),
@@ -88,22 +88,23 @@ class LoginPage extends StatelessWidget {
                     children: [
                       ElevatedButton(
                         onPressed: () {
-                          Connection.internetConnection().then((connection) {
+                          Connection.internetConnection().then((
+                            connection,
+                          ) async {
                             if (connection) {
                               try {
-                                signInWithEmail(
+                                await signInWithEmail(
                                   _email.text.trim(),
                                   _password.text.trim(),
-                                ).then((value) {
-                                  userDataController.login(_email.text).then((
-                                    _,
-                                  ) async {
-                                    await getData();
-                                  });
-                                  Get.offAll(Mainpage());
-                                });
+                                );
+                                await userDataController.login(
+                                  _email.text.trim(),
+                                );
+                                await getData();
+                                Get.offAll(Mainpage());
                               } catch (e) {
                                 print(e);
+                                // Consider showing error message to user here
                               }
                             } else {
                               checkConnectionMsg();

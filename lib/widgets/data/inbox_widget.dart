@@ -1,6 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:line/core/database/firestore/data/app_user.dart';
 import 'package:line/core/database/firestore/data/inbox.dart';
+import 'package:line/generic_fonctions.dart';
+import 'package:line/pages/main/chat_page.dart';
+import 'package:line/widgets/formatted_time.dart';
 
 class InboxWidget extends StatelessWidget {
   final Inbox inbox;
@@ -40,7 +43,7 @@ class InboxWidget extends StatelessWidget {
   Widget build(BuildContext context) {
     return InkWell(
       onTap: () {
-        // navigateWithFade(ChatPage());
+        navigateWithFade(ChatPage(inbox: inbox));
       },
       child: Container(
         margin: const EdgeInsets.symmetric(vertical: 12, horizontal: 8),
@@ -87,7 +90,10 @@ class InboxWidget extends StatelessWidget {
                 crossAxisAlignment: CrossAxisAlignment.end,
                 children: [
                   Text(
-                    inbox.lastUpdated.toDate().toIso8601String(),
+                    formatedTime(
+                      "dd/MM/yyyy hh:mm",
+                      inbox.lastUpdated.toDate(),
+                    ),
                     style: const TextStyle(color: Colors.grey, fontSize: 12),
                   ),
                   // if (unreadCount > 0)

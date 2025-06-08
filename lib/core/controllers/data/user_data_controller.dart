@@ -22,11 +22,8 @@ class UserDataController extends GetxController {
       nameP: userData.name,
       emailP: userData.email,
     );
-    user.value = AppUser(
-      id: userData.id,
-      email: userData.email,
-      name: userData.name,
-    );
+    user.value = SettingsData().getUser();
+    user.refresh();
   }
 
   Future<void> logout() async {
@@ -36,5 +33,9 @@ class UserDataController extends GetxController {
       emailP: "example@wow.com",
     );
     user.value = AppUser(id: "", email: "example@wow.com", name: "None");
+  }
+
+  void setUser() {
+    user.value = SettingsData().getUser();
   }
 }

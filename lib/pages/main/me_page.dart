@@ -6,7 +6,6 @@ import 'package:line/core/controllers/UI/toggle_controller.dart';
 import 'package:line/core/controllers/data/user_data_controller.dart';
 import 'package:line/generic_fonctions.dart';
 import 'package:line/pages/login/login_page.dart';
-import 'package:line/pages/main/me/about_page.dart';
 import 'package:line/pages/main/me/profile_page.dart';
 import 'package:line/pages/main/me/settings_page.dart';
 
@@ -30,19 +29,24 @@ class MePage extends StatelessWidget {
         const SizedBox(height: 10),
         Obx(() {
           final name = userController.user.value.name;
-          return Text(
-            // "${usr?.name}",
-            name,
-            style: const TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
+          final email = userController.user.value.email;
+          return Column(
+            children: [
+              Text(
+                // "${usr?.name}",
+                name,
+                style: const TextStyle(
+                  fontSize: 18,
+                  fontWeight: FontWeight.bold,
+                ),
+              ),
+              Text(email),
+              // Text("${usr?.email}"),
+            ],
           );
         }),
-        // Text("${usr?.email}"),
-        Obx(() {
-          final email = userController.user.value.email;
-          return Text(email);
-        }),
-
         const SizedBox(height: 20),
+
         Obx(() {
           final dark = darkmode.obj.value;
           return ElevatedButton(
@@ -77,7 +81,7 @@ class MePage extends StatelessWidget {
           leading: const Icon(Icons.text_snippet_rounded),
           title: const Text('About us'),
           onTap: () {
-            navigateWithFade(AboutPage());
+            // navigateWithFade(AboutPage());
           },
         ),
 

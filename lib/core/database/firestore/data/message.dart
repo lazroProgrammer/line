@@ -53,7 +53,7 @@ class Message extends DataObj {
   Map<String, dynamic> toJson() {
     return {
       'content': content,
-      'created_at': createdAt,
+      'createdAt': createdAt,
       'inboxRef': inboxRef,
       'isArchived': isArchived,
       'isEdited': isEdited,
