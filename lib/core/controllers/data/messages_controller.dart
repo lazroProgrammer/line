@@ -7,12 +7,14 @@ import 'package:line/core/apis/app/settings.dart';
 import 'package:line/core/database/firestore/daos/message_dao.dart';
 import 'package:line/core/database/firestore/data/inbox.dart';
 import 'package:line/core/database/firestore/data/message.dart' as m;
+import 'package:line/widgets/formatted_time.dart';
 
 //TODO: add archiving, editing later..
 class MessagesController extends GetxController {
   late RxList<m.Message> messages;
   late Rx<Inbox> inbox;
   late Rx<DocumentSnapshot<Object?>?> lastDoc;
+  RxSet dates = RxSet({});
   StreamSubscription<QuerySnapshot<Map<String, dynamic>>>? _subscription;
 
   final MessageDao dao = MessageDao(firestore: FirebaseFirestore.instance);
@@ -35,6 +37,7 @@ class MessagesController extends GetxController {
       lastVisibleMessage: lastDoc.value,
     );
     messages.addAll(msgs.reversed);
+    _addAll(msgs);
     lastDoc.value = last;
     // startListening(lastDoc.value!.reference, messages.first.createdAt);
   }
@@ -104,8 +107,17 @@ class MessagesController extends GetxController {
               snapshot.docs
                   .map((doc) => m.Message.fromJson(doc.data(), doc.id))
                   .toList();
-          messages.assignAll(newMessages.reversed);
+          // messages.assignAll(newMessages.reversed);
+          dates.clear();
+          _addAll(newMessages);
         });
+  }
+
+  void _addAll(List<m.Message> msgs) {
+    for (var element in msgs) {
+      String date = formatedTime("dd/MM/yyyy", element.lastUpdate.toDate());
+      dates.contains(date) ? 0 : dates.add(date);
+    }
   }
 
   void stopListening() {
