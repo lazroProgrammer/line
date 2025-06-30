@@ -14,7 +14,7 @@ class MessagesController extends GetxController {
   late RxList<m.Message> messages;
   late Rx<Inbox> inbox;
   late Rx<DocumentSnapshot<Object?>?> lastDoc;
-  RxSet dates = RxSet({});
+  RxSet<String> dates = RxSet({});
   StreamSubscription<QuerySnapshot<Map<String, dynamic>>>? _subscription;
 
   final MessageDao dao = MessageDao(firestore: FirebaseFirestore.instance);
@@ -71,6 +71,17 @@ class MessagesController extends GetxController {
     } catch (e) {}
   }
 
+  Map<String, List<m.Message>> groupMessagesByDate() {
+    final Map<String, List<m.Message>> grouped = {};
+
+    for (final msg in messages) {
+      final date = formatedTime("dd/MM/yyyy", msg.lastUpdate.toDate());
+      grouped.putIfAbsent(date, () => []).add(msg);
+    }
+
+    return grouped;
+  }
+
   // void startListening(DocumentReference inbox, Timestamp latestTimestamp) {
   //   _subscription?.cancel();
   //   _subscription = dao.startMessageListener(inbox, latestTimestamp).listen((
@@ -107,7 +118,7 @@ class MessagesController extends GetxController {
               snapshot.docs
                   .map((doc) => m.Message.fromJson(doc.data(), doc.id))
                   .toList();
-          // messages.assignAll(newMessages.reversed);
+          messages.assignAll(newMessages.reversed);
           dates.clear();
           _addAll(newMessages);
         });

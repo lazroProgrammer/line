@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
-import 'package:line/core/apis/app/settings.dart';
 import 'package:line/core/controllers/data/messages_controller.dart';
 import 'package:line/core/database/firestore/data/inbox.dart';
+import 'package:line/widgets/data/message_widget.dart';
 
 class ChatWidget extends StatelessWidget {
   ChatWidget({super.key, required this.inbox});
@@ -15,48 +15,46 @@ class ChatWidget extends StatelessWidget {
     final MessagesController messagesController = Get.put(
       MessagesController(inbox),
     );
+
     return Column(
       children: [
         Expanded(
           child: Obx(() {
-            final messages = messagesController.messages;
+            final groupedMessages = messagesController.groupMessagesByDate();
+            final dates = groupedMessages.keys.toList();
+
             return ListView.builder(
-              padding: const EdgeInsets.all(14.0),
-              itemCount: messages.length,
+              padding: const EdgeInsets.all(8),
+              itemCount: dates.length,
               itemBuilder: (context, index) {
-                final message = messages[index];
-                final isUser = message.sender == SettingsData().userID;
-                final alignment =
-                    isUser ? Alignment.centerRight : Alignment.centerLeft;
-                final color = isUser ? Colors.blueAccent : Colors.grey[300];
-                final textColor = isUser ? Colors.white : Colors.black87;
-                return Align(
-                  alignment: alignment,
-                  child: Container(
-                    margin: const EdgeInsets.symmetric(vertical: 4.0),
-                    padding: const EdgeInsets.symmetric(
-                      horizontal: 12,
-                      vertical: 8,
+                final date = dates[index];
+                final messagesForDate = groupedMessages[date]!;
+
+                return Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Padding(
+                      padding: const EdgeInsets.symmetric(vertical: 8.0),
+                      child: Center(
+                        child: Text(
+                          date,
+                          style: const TextStyle(
+                            color: Colors.grey,
+                            fontSize: 14,
+                          ),
+                        ),
+                      ),
                     ),
-                    constraints: BoxConstraints(
-                      maxWidth: MediaQuery.of(context).size.width * 0.75,
+                    ...messagesForDate.map(
+                      (msg) => MessageWidget(message: msg),
                     ),
-                    decoration: BoxDecoration(
-                      color: color,
-                      borderRadius: BorderRadius.circular(12),
-                    ),
-                    child: Text(
-                      //TODO: to be changed later
-                      message.content["data"] as String,
-                      style: TextStyle(color: textColor, fontSize: 16),
-                    ),
-                  ),
+                  ],
                 );
               },
             );
           }),
         ),
-        Divider(height: 1),
+        const Divider(height: 1),
         Padding(
           padding: const EdgeInsets.symmetric(horizontal: 8.0),
           child: Row(
@@ -67,14 +65,14 @@ class ChatWidget extends StatelessWidget {
                   onSubmitted: (_) async {
                     await _sendMessage(messagesController);
                   },
-                  decoration: InputDecoration(
+                  decoration: const InputDecoration(
                     hintText: 'Type a message',
                     border: InputBorder.none,
                   ),
                 ),
               ),
               IconButton(
-                icon: Icon(Icons.send, color: Colors.blue),
+                icon: const Icon(Icons.send, color: Colors.blue),
                 onPressed: () async {
                   await _sendMessage(messagesController);
                 },
@@ -82,14 +80,14 @@ class ChatWidget extends StatelessWidget {
             ],
           ),
         ),
-        SizedBox(height: 8),
+        const SizedBox(height: 8),
       ],
     );
   }
 
   Future<void> _sendMessage(MessagesController mController) async {
     final text = _controller.text;
-    if (text.trim() != "") {
+    if (text.trim().isNotEmpty) {
       await mController.add(text.trim());
       _controller.clear();
     }
