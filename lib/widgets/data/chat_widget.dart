@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import 'package:line/core/controllers/UI/toggle_controller.dart';
 import 'package:line/core/controllers/data/messages_controller.dart';
 import 'package:line/core/database/firestore/data/inbox.dart';
 import 'package:line/widgets/data/message_widget.dart';
@@ -15,6 +16,7 @@ class ChatWidget extends StatelessWidget {
     final MessagesController messagesController = Get.put(
       MessagesController(inbox),
     );
+    final ToggleController isSubmitted = Get.put(ToggleController(true));
 
     return Column(
       children: [
@@ -62,21 +64,32 @@ class ChatWidget extends StatelessWidget {
               Expanded(
                 child: TextField(
                   controller: _controller,
-                  onSubmitted: (_) async {
-                    await _sendMessage(messagesController);
+                  onChanged: (value) {
+                    _controller.text.isNotEmpty
+                        ? isSubmitted.setValue(false)
+                        : isSubmitted.setValue(true);
                   },
+                  // onSubmitted: (_) async {
+                  //   await _sendMessage(messagesController, isSubmitted);
+                  // },
                   decoration: const InputDecoration(
                     hintText: 'Type a message',
                     border: InputBorder.none,
                   ),
                 ),
               ),
-              IconButton(
-                icon: const Icon(Icons.send, color: Colors.blue),
-                onPressed: () async {
-                  await _sendMessage(messagesController);
-                },
-              ),
+              Obx(() {
+                final isSub = isSubmitted.obj.value;
+                return IconButton(
+                  icon: Icon(Icons.send, color: isSub ? null : Colors.blue),
+                  onPressed:
+                      isSub
+                          ? null
+                          : () async {
+                            await _sendMessage(messagesController, isSubmitted);
+                          },
+                );
+              }),
             ],
           ),
         ),
@@ -85,11 +98,15 @@ class ChatWidget extends StatelessWidget {
     );
   }
 
-  Future<void> _sendMessage(MessagesController mController) async {
+  Future<void> _sendMessage(
+    MessagesController mController,
+    ToggleController isSubmitted,
+  ) async {
+    isSubmitted.toggle();
     final text = _controller.text;
     if (text.trim().isNotEmpty) {
-      await mController.add(text.trim());
       _controller.clear();
+      await mController.add(text.trim());
     }
   }
 }

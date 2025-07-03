@@ -14,7 +14,7 @@ class MessagesController extends GetxController {
   late RxList<m.Message> messages;
   late Rx<Inbox> inbox;
   late Rx<DocumentSnapshot<Object?>?> lastDoc;
-  RxSet<String> dates = RxSet({});
+  late RxMap<String, List<m.Message>> dates_messages;
   StreamSubscription<QuerySnapshot<Map<String, dynamic>>>? _subscription;
 
   final MessageDao dao = MessageDao(firestore: FirebaseFirestore.instance);
@@ -23,6 +23,8 @@ class MessagesController extends GetxController {
     inbox = inboxP.obs;
     lastDoc = Rx<DocumentSnapshot<Object?>?>(null);
     messages = RxList([]);
+    dates_messages = RxMap();
+
     print(FirebaseAuth.instance.currentUser!.uid);
     startListening(inboxP.getRef());
     // fetchMessages().then((_) {
@@ -37,8 +39,8 @@ class MessagesController extends GetxController {
       lastVisibleMessage: lastDoc.value,
     );
     messages.addAll(msgs.reversed);
-    _addAll(msgs);
     lastDoc.value = last;
+    dates_messages.value = groupMessagesByDate();
     // startListening(lastDoc.value!.reference, messages.first.createdAt);
   }
 
@@ -58,7 +60,9 @@ class MessagesController extends GetxController {
     );
     try {
       await dao.add(msg);
-      messages.add(msg);
+      // messages.add(msg);
+      final date = formatedTime("dd/MM/yyyy", msg.lastUpdate.toDate());
+      dates_messages.putIfAbsent(date, () => []).add(msg);
     } catch (e) {
       m.log.e("Error at updating status:$e");
     }
@@ -67,7 +71,10 @@ class MessagesController extends GetxController {
   Future<void> deleteByID(String id) async {
     try {
       await dao.delete(id);
-      messages.removeWhere((r) => r.id == id);
+      final msg = messages.firstWhere((r) => r.id == id);
+      final date = formatedTime("dd/MM/yyyy", msg.lastUpdate.toDate());
+      dates_messages[date]!.remove(msg);
+      messages.remove(msg);
     } catch (e) {}
   }
 
@@ -119,16 +126,9 @@ class MessagesController extends GetxController {
                   .map((doc) => m.Message.fromJson(doc.data(), doc.id))
                   .toList();
           messages.assignAll(newMessages.reversed);
-          dates.clear();
-          _addAll(newMessages);
+          dates_messages.clear();
+          dates_messages.value = groupMessagesByDate();
         });
-  }
-
-  void _addAll(List<m.Message> msgs) {
-    for (var element in msgs) {
-      String date = formatedTime("dd/MM/yyyy", element.lastUpdate.toDate());
-      dates.contains(date) ? 0 : dates.add(date);
-    }
   }
 
   void stopListening() {

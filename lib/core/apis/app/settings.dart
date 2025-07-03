@@ -148,6 +148,6 @@ class SettingsData {
   }
 
   AppUser getUser() {
-    return AppUser(id: userID, email: email, name: name);
+    return AppUser(id: userID, email: email, name: name, isConnected: true);
   }
 }

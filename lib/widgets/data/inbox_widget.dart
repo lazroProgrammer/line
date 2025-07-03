@@ -51,11 +51,34 @@ class InboxWidget extends StatelessWidget {
         child: Row(
           children: [
             CircleAvatar(
-              radius: 40,
+              radius: 36,
               backgroundColor: getColorFromName(user.name),
               child: Icon(Icons.person, size: 50),
             ),
-            const SizedBox(width: 12),
+            const SizedBox(width: 2),
+            Padding(
+              padding: const EdgeInsets.symmetric(vertical: 6.0),
+              child: Align(
+                alignment: Alignment.topCenter,
+                child: Container(
+                  padding: EdgeInsets.all(user.isConnected ? 1 : 3),
+                  decoration: BoxDecoration(
+                    color: Colors.transparent,
+                    border:
+                        user.isConnected
+                            ? Border.all(color: Colors.green, width: 2)
+                            : null,
+                    shape: BoxShape.circle,
+                  ),
+                  child: CircleAvatar(
+                    backgroundColor:
+                        user.isConnected ? Colors.green : Colors.grey,
+                    radius: 6,
+                  ),
+                ),
+              ),
+            ),
+            const SizedBox(width: 8),
             Expanded(
               child: Padding(
                 padding: const EdgeInsets.symmetric(vertical: 4),
@@ -67,14 +90,15 @@ class InboxWidget extends StatelessWidget {
                       user.name,
                       style: const TextStyle(
                         fontWeight: FontWeight.bold,
-                        fontSize: 16,
+                        fontSize: 18,
                       ),
                       maxLines: 1,
                       overflow: TextOverflow.ellipsis,
                     ),
                     const SizedBox(height: 6),
                     Text(
-                      inbox.lastMessage,
+                      // inbox.lastMessage,
+                      "hey, do you want to hang out later?",
                       style: const TextStyle(color: Colors.grey),
                       maxLines: 2,
                       overflow: TextOverflow.ellipsis,
