@@ -14,7 +14,7 @@ class UserSearchController extends GetxController {
   UserSearchController() {
     results = RxList();
   }
-
+  // this judges what suggestion function to use
   void onQueryChanged(String input) {
     query.value = input.trim();
 

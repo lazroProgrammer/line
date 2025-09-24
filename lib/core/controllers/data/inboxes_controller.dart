@@ -31,6 +31,7 @@ class InboxesController extends UsersRefController {
       inboxes.addAll(a);
     }
     lastDoc.value = b;
+    //this stores users in the user refs variable
     await getUsers(getInboxSecondUser());
     isLoaded.value = true;
   }
@@ -51,6 +52,7 @@ class InboxesController extends UsersRefController {
         lastMessage: "",
       );
       inboxes.add(newInbox);
+      //this stores users in the user refs variable
       await getUsers(getInboxSecondUser());
     } catch (e) {
       log.e("Error at updating status:$e");

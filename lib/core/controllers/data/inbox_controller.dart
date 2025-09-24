@@ -37,6 +37,7 @@ class MessagesController extends GetxController {
     );
     try {
       String id = await dao.add(inbox);
+
       //? after adding to server
       final newInbox = Inbox(
         id: id,

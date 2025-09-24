@@ -21,6 +21,8 @@ class SentFriendRequestsController extends UsersRefController {
     List<FriendRequest> requests = await dao.getBySender(
       SettingsData().getUser().id,
     );
+
+    //updating controller data
     friendRequests.assignAll(requests);
     await getUsers(FriendRequest.getUsers(friendRequests, isSender: false));
   }
@@ -34,6 +36,7 @@ class SentFriendRequestsController extends UsersRefController {
     );
     try {
       String id = await dao.add(request);
+      //added id to the object
       final newRequest = FriendRequest(
         id: id,
         createdAt: Timestamp.fromDate(DateTime.timestamp()),
@@ -41,6 +44,8 @@ class SentFriendRequestsController extends UsersRefController {
         receiver: user.id,
         status: "pending",
       );
+
+      //updating controller data
       friendRequests.add(newRequest);
       await getUsers(FriendRequest.getUsers(friendRequests, isSender: false));
     } catch (e) {
@@ -51,9 +56,11 @@ class SentFriendRequestsController extends UsersRefController {
   Future<void> deleteByID(String id) async {
     try {
       await dao.delete(id);
+
+      //updating controller data
       friendRequests.removeWhere((r) => r.id == id);
-      print(friendRequests.length);
       await getUsers(FriendRequest.getUsers(friendRequests, isSender: false));
+      print(friendRequests.length);
     } catch (e) {
       log.e("exception $e");
     }

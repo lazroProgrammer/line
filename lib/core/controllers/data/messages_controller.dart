@@ -29,7 +29,7 @@ class MessagesController extends GetxController {
     print(FirebaseAuth.instance.currentUser!.uid);
     startListening(inboxP.getRef());
     // fetchMessages().then((_) {
-    //   // startListening(lastDoc.value!.reference, messages.first.createdAt);
+    // startListening(lastDoc.value!.reference, messages.first.createdAt);
     // });
   }
 
@@ -45,6 +45,7 @@ class MessagesController extends GetxController {
   }
 
   Future<void> add(String text) async {
+    // preparing data
     Timestamp now = Timestamp.now();
     final userRef = SettingsData().getUser().id;
     final content = m.Message.getContent(text);
@@ -59,8 +60,8 @@ class MessagesController extends GetxController {
       receiver: inbox.value.userIDs.firstWhere((element) => userRef != element),
     );
     try {
+      // add object to controller data
       await dao.add(msg);
-      // messages.add(msg);
       final date = formatedTime("dd/MM/yyyy", msg.lastUpdate.toDate());
       dates_messages.putIfAbsent(date, () => []).add(msg);
     } catch (e) {
@@ -73,6 +74,8 @@ class MessagesController extends GetxController {
       await dao.delete(id);
       final msg = messages.firstWhere((r) => r.id == id);
       final date = formatedTime("dd/MM/yyyy", msg.lastUpdate.toDate());
+
+      // remove from controller data
       dates_messages[date]!.remove(msg);
       messages.remove(msg);
     } catch (e) {}
@@ -91,7 +94,7 @@ class MessagesController extends GetxController {
 
   void startListening(DocumentReference inboxRef) {
     _subscription?.cancel();
-
+    //defining what the subscription gives
     _subscription = FirebaseFirestore.instance
         .collection('messages')
         .where('inboxRef', isEqualTo: inboxRef)
