@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
-import 'package:line/core/controllers/UI/user_search_controller.dart';
-import 'package:line/widgets/data/user_search_widget.dart';
+import 'package:line/core/controllers/feature/user_search_controller.dart';
 import 'package:line/widgets/search_widget.dart';
+import 'package:line/widgets/user_search_widget.dart';
 
 class AddFriendsPage extends StatelessWidget {
   const AddFriendsPage({super.key});

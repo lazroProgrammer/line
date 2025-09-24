@@ -14,6 +14,7 @@ class MessagesController extends GetxController {
   late RxList<m.Message> messages;
   late Rx<Inbox> inbox;
   late Rx<DocumentSnapshot<Object?>?> lastDoc;
+  //for regrouping messages with dates like social media messages
   late RxMap<String, List<m.Message>> dates_messages;
   StreamSubscription<QuerySnapshot<Map<String, dynamic>>>? _subscription;
 
@@ -28,7 +29,6 @@ class MessagesController extends GetxController {
     print(FirebaseAuth.instance.currentUser!.uid);
     startListening(inboxP.getRef());
     // fetchMessages().then((_) {
-
     //   // startListening(lastDoc.value!.reference, messages.first.createdAt);
     // });
   }
@@ -89,29 +89,6 @@ class MessagesController extends GetxController {
     return grouped;
   }
 
-  // void startListening(DocumentReference inbox, Timestamp latestTimestamp) {
-  //   _subscription?.cancel();
-  //   _subscription = dao.startMessageListener(inbox, latestTimestamp).listen((
-  //     newMsgs,
-  //   ) {
-  //     print("🎯 New messages received: ${newMsgs.length}");
-  //     messages.addAll(newMsgs.reversed);
-  //   });
-  // }
-
-  // void startListening(DocumentReference inbox, Timestamp latestTimestamp) {
-  //   _subscription?.cancel();
-  //   print("hello");
-  //   _subscription = dao.startMessageListener(
-  //     inboxRef: inbox,
-  //     latestTimestamp:
-  //         messages.isNotEmpty ? messages.last.createdAt : Timestamp(0, 0),
-  //     onNewMessages: (List<m.Message> newMsgs) {
-  //       print("📥 Got ${newMsgs.length} new messages");
-  //       messages.addAll(newMsgs.reversed);
-  //     },
-  //   );
-  // }
   void startListening(DocumentReference inboxRef) {
     _subscription?.cancel();
 

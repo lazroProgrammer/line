@@ -9,8 +9,14 @@ class AppUser extends DataObj {
   final String id;
   final String email;
   final String name;
+  final bool isConnected;
 
-  AppUser({required this.id, required this.email, required this.name});
+  AppUser({
+    required this.id,
+    required this.email,
+    required this.name,
+    required this.isConnected,
+  });
 
   factory AppUser.fromJson(Map<String, dynamic> json, String id) {
     try {
@@ -18,6 +24,7 @@ class AppUser extends DataObj {
         id: id,
         email: json['email'] as String? ?? '',
         name: json['name'] as String? ?? '',
+        isConnected: json['isConnected'] as bool? ?? false,
       );
     } catch (e) {
       throw FormatException('AppUser.fromJson failed: $e');
@@ -25,7 +32,7 @@ class AppUser extends DataObj {
   }
 
   Map<String, dynamic> toJson() {
-    return {'email': email, 'name': name};
+    return {'email': email, 'name': name, 'isConnected': isConnected};
   }
 
   @override

@@ -4,6 +4,8 @@ import 'package:line/core/apis/app/settings.dart';
 import 'package:line/core/database/firestore/daos/user_dao.dart';
 import 'package:line/core/database/firestore/data/app_user.dart';
 
+//handles user searches
+
 class UserSearchController extends GetxController {
   RxString query = ''.obs;
   late RxList<AppUser> results;

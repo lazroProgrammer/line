@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:get/get.dart';
-import 'package:line/core/controllers/UI/user_search_controller.dart';
+import 'package:line/core/controllers/feature/user_search_controller.dart';
 
 class SearchWidget extends StatefulWidget {
   const SearchWidget({super.key});

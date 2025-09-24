@@ -1,5 +1,6 @@
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
+import 'package:fluttertoast/fluttertoast.dart';
 import 'package:line/main.dart';
 import 'package:line/pages/login/login_page.dart';
 import 'package:line/pages/main/main_page.dart';
@@ -18,8 +19,10 @@ class _RootState extends State<Root> {
   @override
   void initState() {
     super.initState();
-    _userFuture = Future.value(FirebaseAuth.instance.currentUser);
-    _dataFuture = _loadInitialData();
+    _userFuture = Future.value(FirebaseAuth.instance.currentUser).then((user) {
+      _dataFuture = _loadInitialData();
+      return user; // Return user so _userFuture still resolves to User?
+    });
   }
 
   Future<bool> _loadInitialData() async {
@@ -45,9 +48,11 @@ class _RootState extends State<Root> {
                   body: Center(child: CircularProgressIndicator()),
                 );
               } else if (dataSnapshot.hasError) {
-                return Scaffold(
-                  body: Center(child: Text("Oops, error loading data")),
-                );
+                Fluttertoast.showToast(msg: "there is some error here");
+                return LoginPage();
+                // return Scaffold(
+                //   body: Center(child: Text("Oops, error loading data")),
+                // );
               } else {
                 return const Mainpage();
               }

@@ -17,6 +17,7 @@ class UserDataController extends GetxController {
 
   Future<void> login(String email) async {
     AppUser userData = await dao.getByEmailAuth(email);
+    await updateStatus(true, userData: userData);
     SettingsData().update(
       userIDP: FirebaseAuth.instance.currentUser!.uid,
       nameP: userData.name,
@@ -32,7 +33,17 @@ class UserDataController extends GetxController {
       nameP: "None",
       emailP: "example@wow.com",
     );
-    user.value = AppUser(id: "", email: "example@wow.com", name: "None");
+    user.value = AppUser(
+      id: "",
+      email: "example@wow.com",
+      name: "None",
+      isConnected: false,
+    );
+  }
+
+  Future<void> updateStatus(bool connected, {AppUser? userData}) async {
+    userData ??= SettingsData().getUser();
+    await dao.update(userData.id, {"isConnected": connected});
   }
 
   void setUser() {

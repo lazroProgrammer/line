@@ -44,11 +44,14 @@ class MainApp extends StatelessWidget {
   }
 }
 
-void _initControllers() {
+void _initControllers() async {
   Get.put(InboxesController(), tag: "inboxes");
   Get.put(SentFriendRequestsController(), tag: "sentRequests");
   Get.put(ReceivedFriendRequestsController(), tag: "receivedRequests");
-  Get.put(UserDataController(), tag: "user");
+  final userController = Get.put(UserDataController(), tag: "user");
+  if (userController.user.value.id.isNotEmpty) {
+    await userController.updateStatus(true);
+  }
 }
 
 Future<void> getData() async {
@@ -60,9 +63,13 @@ Future<void> getData() async {
     tag: "receivedRequests",
   );
 
-  await Future.wait([
-    inboxesController.getInboxes(),
-    sentRequestsController.getSentRequests(),
-    receivedRequestsController.getReceivedRequests(),
-  ]);
+  try {
+    await Future.wait([
+      inboxesController.getInboxes(),
+      sentRequestsController.getSentRequests(),
+      receivedRequestsController.getReceivedRequests(),
+    ]);
+  } catch (e) {
+    print("this is executing on login");
+  }
 }

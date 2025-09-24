@@ -3,6 +3,7 @@ import 'package:get/get.dart';
 import 'package:line/core/database/firestore/daos/user_dao.dart';
 import 'package:line/core/database/firestore/data/app_user.dart';
 
+// for classes that have a user foreign key
 class UsersRefController extends GetxController {
   late Rx<Map<String, AppUser>> users;
   final UserDao userDao = UserDao(firestore: FirebaseFirestore.instance);

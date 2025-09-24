@@ -195,6 +195,7 @@ class _MyWidgetState extends State<SignupPage> {
                                 id: v.user!.uid,
                                 email: _email.text,
                                 name: _name.text,
+                                isConnected: false,
                               );
                               userDataController.add(user).then((_) {
                                 Fluttertoast.showToast(

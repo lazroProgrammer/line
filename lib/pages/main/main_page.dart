@@ -3,8 +3,8 @@ import 'package:get/get.dart';
 import 'package:line/core/controllers/UI/index_controller.dart';
 import 'package:line/core/controllers/data/inboxes_controller.dart';
 import 'package:line/generic_fonctions.dart';
-import 'package:line/pages/main/add_friends_page.dart';
-import 'package:line/pages/main/friends_request_page.dart';
+import 'package:line/pages/main/appbar_links/add_friends_page.dart';
+import 'package:line/pages/main/appbar_links/friends_request_page.dart';
 import 'package:line/pages/main/homepage.dart';
 import 'package:line/pages/main/me_page.dart';
 

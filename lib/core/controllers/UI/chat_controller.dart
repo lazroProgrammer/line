@@ -2,6 +2,8 @@ import 'dart:math';
 
 import 'package:get/get.dart';
 
+// a state machine that was used to test the UI, it responds to you based on
+// messages you send
 class ChatController extends GetxController {
   final messages = <_ChatMessage>[].obs;
   final _random = Random();

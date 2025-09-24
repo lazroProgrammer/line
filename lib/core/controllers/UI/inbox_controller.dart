@@ -1,5 +1,6 @@
 import 'package:get/get.dart';
 
+// was used for the inboxes screen to simulate fetching at first
 class InboxController extends GetxController {
   var isLoaded = false.obs;
 
