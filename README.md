@@ -1,4 +1,4 @@
-# Line: a messaging app
+# Line: a messaging app (comparable to sms app for now)
 
 A messaging app that is built using flutter, you directly message whoever you want just by searching, this is a learning project that should be completed in 10 to 15 days considering the novelty of the things here to me. for now the project is officialy paused due to occupation in 04/05/2025
 
