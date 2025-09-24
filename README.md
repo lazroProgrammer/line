@@ -22,5 +22,7 @@ A messaging app that is built using flutter, you directly message whoever you wa
 - SharedPreferences for local storage
 - Logger for logging and debugging
 
-### Notice:
-This project is still under development. For this project, I aim to finish an MVP when I'm free. May is a busy month for me, so I'm going to try and finish the core functionality in 10 days when I'm available. As of 04/05/2025, the UI prototype is completed and done in the first day.
+### Work overview:
+
+I have worked on this on several occasions separated in a timeline between the beginning of may and completed it's core functionality on 8 of june, if i would approximate the time spent on this, it would be like 15 to 20 days maximum, I did and I am planning to improve on it occasionally until I am satisfied with the result.
+
